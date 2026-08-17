@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#07090e">
+<title>GLOBAL CAPITAL</title>
+<style>
+  :root {
+    --bg-main: #07090e;
+    --bg-panel: #0f141f;
+    --bg-card: #151c2b;
+    --accent-green: #00ff66;
+    --accent-amber: #ffaa00;
+    --accent-red: #ff3344;
+    --accent-cyan: #00e5ff;
+    --text-main: #f8fafc;
+    --text-muted: #64748b;
+    --border: #1e293b;
+    --font-mono: -apple-system-ui-monospaced, 'SF Mono', 'Roboto Mono', monospace;
+    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  body {
+    background: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding-top: max(env(safe-area-inset-top), 10px);
+    padding-bottom: max(env(safe-area-inset-bottom), 12px);
+    padding-left: 12px;
+    padding-right: 12px;
+    overflow: hidden;
+  }
+
+  /* TOP STICKY FINANCIAL HUD */
+  .hud {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    flex-shrink: 0;
+  }
+
+  .hud-block { display: flex; flex-direction: column; }
+  .hud-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-family: var(--font-mono); }
+  .hud-val { font-size: 16px; font-weight: 800; font-family: var(--font-mono); margin-top: 1px; }
+  
+  .val-green { color: var(--accent-green); }
+  .val-cyan { color: var(--accent-cyan); }
+  .val-amber { color: var(--accent-amber); }
+
+  .bar-container {
+    width: 100%;
+    height: 4px;
+    background: #1e293b;
+    border-radius: 2px;
+    margin-top: 3px;
+    overflow: hidden;
+  }
+  .bar-fill { height: 100%; transition: width 0.3s ease; }
+
+  /* QUICK TAP LIQUIDITY GENERATOR */
+  .tap-action-bar {
+    margin: 8px 0;
+    flex-shrink: 0;
+  }
+
+  .tap-btn {
+    width: 100%;
+    height: 42px;
+    background: linear-gradient(135deg, #112233 0%, #1e293b 100%);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 10px;
+    color: var(--accent-cyan);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .tap-btn:active {
+    transform: scale(0.98);
+    background: var(--accent-cyan);
+    color: #000;
+  }
+
+  /* MAIN SCROLLABLE VIEWPORT */
+  .viewport {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+    min-height: 0;
+  }
+
+  .view-tab { display: none; flex-direction: column; gap: 10px; }
+  .view-tab.active { display: flex; }
+
+  /* DIRECTIVE CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .card-title { font-size: 14px; font-weight: 700; color: #fff; }
+  .card-badge {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: #1e293b;
+    color: var(--accent-amber);
+    text-transform: uppercase;
+  }
+
+  .card-desc { font-size: 11.5px; color: #94a3b8; line-height: 1.35; }
+  .card-metrics { font-size: 11px; font-family: var(--font-mono); color: var(--accent-amber); }
+
+  .action-btn {
+    width: 100%;
+    min-height: 44px;
+    background: #1e293b;
+    color: var(--accent-cyan);
+    border: 1px solid var(--accent-cyan);
+    border-radius: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .action-btn:active:not(:disabled) {
+    transform: scale(0.98);
+    background: var(--accent-cyan);
+    color: #000;
+  }
+
+  .action-btn:disabled {
+    opacity: 0.3;
+    border-color: var(--border);
+    color: var(--text-muted);
+  }
+
+  /* INTEL FEED */
+  .log-entry {
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--bg-card);
+    border-left: 3px solid var(--accent-cyan);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  .log-entry.warn { border-left-color: var(--accent-amber); }
+  .log-entry.crit { border-left-color: var(--accent-red); }
+  .log-entry.success { border-left-color: var(--accent-green); }
+
+  /* EMPIRE STATS PANEL */
+  .stat-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  /* THUMB-ACCESSIBLE BOTTOM NAVIGATION BAR */
+  .bottom-nav {
+    display: flex;
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 4px;
+    gap: 6px;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  .nav-item {
+    flex: 1;
+    height: 46px;
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    font-size: 10px;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .nav-item.active {
+    background: #192336;
+    color: var(--accent-cyan);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+  }
+
+  .nav-icon { font-size: 14px; }
+
+  /* FULLSCREEN MODAL */
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: 24px;
+  }
+
+  .modal-box {
+    background: var(--bg-panel);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    width: 100%;
+    max-width: 340px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="hud">
+    <div class="hud-block">
+      <span class="hud-label">Capital (Cash)</span>
+      <span class="hud-val val-green" id="ui-capital">$50.0M</span>
+      <span class="hud-label" id="ui-cashflow" style="color:var(--accent-green); margin-top:2px;">+$1.2M/s</span>
+    </div>
+    <div class="hud-block">
+      <span class="hud-label">Net Worth / Stage</span>
+      <span class="hud-val val-cyan" id="ui-networth">$150.0M</span>
+      <span class="hud-label" id="ui-stage" style="color:var(--text-muted); margin-top:2px;">Stage I</span>
+    </div>
+    <div class="hud-block">
+      <span class="hud-label">Global Hegemony</span>
+      <span class="hud-val val-amber" id="ui-influence">1%</span>
+      <div class="bar-container">
+        <div class="bar-fill" id="bar-influence" style="width: 1%; background: var(--accent-amber);"></div>
+      </div>
+    </div>
+    <div class="hud-block">
+      <span class="hud-label">Trust / Shadow Index</span>
+      <span class="hud-val" id="ui-trust-shadow" style="font-size: 14px;">65% / 5%</span>
+      <div class="bar-container">
+        <div class="bar-fill" id="bar-trust" style="width: 65%; background: var(--accent-green);"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tap-action-bar">
+    <button class="tap-btn" onclick="triggerManualSiphon()">
+      <span>⚡ Siphon Market Liquidity</span>
+      <span id="tap-reward" style="font-size: 10px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px;">+$250K</span>
+    </button>
+  </div>
+
+  <main class="viewport">
+    <div id="view-ops" class="view-tab active">
+      </div>
+
+    <div id="view-intel" class="view-tab">
+      <div id="log-feed" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="view-empire" class="view-tab">
+      <div class="stat-row">
+        <span>TIMELINE</span>
+        <span id="empire-date" style="color:var(--accent-cyan);">2004.Q1</span>
+      </div>
+      <div class="stat-row">
+        <span>HOLDINGS ACQUIRED</span>
+        <span id="empire-holdings" style="color:var(--accent-green);">0 / 9</span>
+      </div>
+      <div class="stat-row">
+        <span>PASSIVE INCOME RATE</span>
+        <span id="empire-rate" style="color:var(--accent-amber);">+$1.2M / sec</span>
+      </div>
+      <div class="stat-row">
+        <span>HEGEMONY THRESHOLD</span>
+        <span>100% & $1.0T Required</span>
+      </div>
+      <div class="card" style="margin-top:8px;">
+        <div class="card-title">Directives Clearances</div>
+        <div class="card-desc">Expand your grip over broadcast media, critical rare-earth logistics, algorithmic front-running, and sovereign debt instruments to trigger the planetary hegemony state.</div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchNav('ops', this)">
+      <span class="nav-icon">🏢</span>
+      <span>Directives</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('intel', this)">
+      <span class="nav-icon">📡</span>
+      <span>Intel Feed</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('empire', this)">
+      <span class="nav-icon">🌐</span>
+      <span>Empire</span>
+    </button>
+  </nav>
+
+  <div id="modal-container"></div>
+
+<script>
+  // APP STATE
+  const state = {
+    capital: 50000000,
+    netWorth: 150000000,
+    influence: 1,
+    sentiment: 65,
+    shadow: 5,
+    cashflow: 1200000,
+    tapValue: 250000,
+    year: 2004,
+    quarter: 1,
+    purchased: new Set()
+  };
+
+  const formatMoney = num => {
+    if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
+    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
+    if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
+    if (num >= 1e3) return `$${(num / 1e3).toFixed(0)}K`;
+    return `$${num.toLocaleString()}`;
+  };
+
+  // DIRECTIVES REGISTRY
+  const directives = [
+    {
+      id: "media_syndicate",
+      title: "Apex Media Syndicate",
+      tag: "Narrative Control",
+      desc: "Acquire international broadcast network. Spin corporate narrative and suppress regulatory investigations.",
+      cost: 35000000,
+      cashflow: 800000,
+      influence: 4,
+      sentiment: 15,
+      shadow: 0,
+      log: "Apex Media acquired. 24/7 favorable PR network launched."
+    },
+    {
+      id: "lithium_mines",
+      title: "Project Chimera: Rare Earths",
+      tag: "Resource Chokehold",
+      desc: "Secure 20-year sovereign concessions for cobalt and lithium mines in unstable regions.",
+      cost: 40000000,
+      cashflow: 3500000,
+      influence: 5,
+      sentiment: -4,
+      shadow: 8,
+      log: "Project Chimera online. Battery supply chains under your thumb."
+    },
+    {
+      id: "cerberus_engine",
+      title: "Project Cerberus: Surveillance",
+      tag: "Intelligence Grid",
+      desc: "Off-shore predictive behavioral data-mining engine tapping undersea fiber trunks.",
+      cost: 25000000,
+      cashflow: 1500000,
+      influence: 6,
+      sentiment: -5,
+      shadow: 15,
+      log: "Cerberus intercept hubs activated. Blackmail database indexing politicians."
+    },
+    {
+      id: "defense_buyout",
+      title: "Vanguard Aerospace & PMC",
+      tag: "Force Projection",
+      desc: "Buyout defense drone supplier and private military company for sovereign security operations.",
+      cost: 85000000,
+      cashflow: 5000000,
+      influence: 8,
+      sentiment: 0,
+      shadow: 12,
+      log: "Vanguard PMC operational. Private drone wings at executive disposal."
+    },
+    {
+      id: "subprime_short",
+      title: "Subprime Credit Default Swaps",
+      tag: "Predatory Finance",
+      desc: "Position shadow funds to profit directly off the global housing derivatives crash.",
+      cost: 60000000,
+      cashflow: 12000000,
+      influence: 10,
+      sentiment: -8,
+      shadow: 5,
+      log: "Credit default swaps cleared. Multi-hundred-million liquidity payout."
+    },
+    {
+      id: "central_bank_capture",
+      title: "Atlas Commercial Bailout",
+      tag: "Monetary Monopoly",
+      desc: "Absorb a collapsing retail bank with $85B in deposits for a $1 token takeover.",
+      cost: 200000000,
+      cashflow: 25000000,
+      influence: 18,
+      sentiment: 8,
+      shadow: 4,
+      log: "Atlas Bank assimilated. Consumer payroll & transactions under your control."
+    },
+    {
+      id: "dark_pool_nodes",
+      title: "High-Frequency Dark Pool",
+      tag: "Algorithmic Frontrun",
+      desc: "Route Cerberus lines directly under stock exchanges to skim international liquidity.",
+      cost: 500000000,
+      cashflow: 60000000,
+      influence: 12,
+      sentiment: -10,
+      shadow: 18,
+      log: "Fiber-optic dark pool tap live. Skimming 12% of equity trading flows."
+    },
+    {
+      id: "orbital_umbrella",
+      title: "Project Aegis: 4,000 LEO Sats",
+      tag: "Orbital Dominance",
+      desc: "Privatize planetary telecommunications and missile early-warning constellations.",
+      cost: 1500000000,
+      cashflow: 120000000,
+      influence: 22,
+      sentiment: 5,
+      shadow: 10,
+      log: "Aegis constellation online. Global defense comms routed through your satellites."
+    },
+    {
+      id: "digital_sovereignty",
+      title: "Global CBDC Ledger System",
+      tag: "Sovereign Hegemony",
+      desc: "Force central banks to adopt your private encrypted protocol for all sovereign trade.",
+      cost: 5000000000,
+      cashflow: 400000000,
+      influence: 20,
+      sentiment: 5,
+      shadow: 15,
+      log: "Sovereign currencies tied into your private ledger. Total hegemony reached."
+    }
+  ];
+
+  // AUDIO & HAPTICS ENGINE
+  let audioCtx = null;
+  function triggerFeedback(freq = 750) {
+    if (navigator.vibrate) navigator.vibrate(12);
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.05);
+  }
+
+  // NAVIGATION CONTROLLER
+  function switchNav(viewId, el) {
+    triggerFeedback(600);
+    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.view-tab').forEach(tab => tab.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(`view-${viewId}`).classList.add('active');
+  }
+
+  // MANUAL LIQUIDITY TAP
+  window.triggerManualSiphon = function() {
+    triggerFeedback(950);
+    state.capital += state.tapValue;
+    state.netWorth += state.tapValue;
+    updateUI();
+  };
+
+  // LOGS
+  function logEvent(msg, type = 'normal') {
+    const feed = document.getElementById('log-feed');
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.innerText = `[${state.year}.Q${state.quarter}] ${msg}`;
+    feed.insertBefore(entry, feed.firstChild);
+  }
+
+  // RENDER APP STATE
+  function updateUI() {
+    document.getElementById('ui-capital').innerText = formatMoney(state.capital);
+    document.getElementById('ui-cashflow').innerText = `+${formatMoney(state.cashflow)}/s`;
+    document.getElementById('ui-networth').innerText = formatMoney(state.netWorth);
+    document.getElementById('ui-influence').innerText = `${Math.min(100, state.influence)}%`;
+    document.getElementById('bar-influence').style.width = `${Math.min(100, state.influence)}%`;
+    document.getElementById('ui-trust-shadow').innerText = `${Math.max(0, state.sentiment)}% / ${state.shadow}%`;
+    document.getElementById('bar-trust').style.width = `${Math.max(0, state.sentiment)}%`;
+    
+    // Empire Stats Page
+    document.getElementById('empire-date').innerText = `${state.year}.Q${state.quarter}`;
+    document.getElementById('empire-holdings').innerText = `${state.purchased.size} / ${directives.length}`;
+    document.getElementById('empire-rate').innerText = `+${formatMoney(state.cashflow)} / sec`;
+
+    const stageEl = document.getElementById('ui-stage');
+    if (state.influence >= 100 && state.netWorth >= 1e12) stageEl.innerText = "Stage IV: Hegemon";
+    else if (state.netWorth >= 100e9) stageEl.innerText = "Stage III: Sovereign";
+    else if (state.netWorth >= 10e9) stageEl.innerText = "Stage II: Titan";
+    else stageEl.innerText = "Stage I: Mogul";
+
+    // Dynamic button enable/disable
+    directives.forEach(d => {
+      const btn = document.getElementById(`btn-${d.id}`);
+      if (btn) btn.disabled = state.purchased.has(d.id) || state.capital < d.cost;
+    });
+
+    checkEndGame();
+  }
+
+  // RENDER DIRECTIVE CARDS
+  function renderDirectives() {
+    const container = document.getElementById('view-ops');
+    container.innerHTML = '';
+    directives.forEach(d => {
+      const isOwned = state.purchased.has(d.id);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title">${d.title}</div>
+          <div class="card-badge">${d.tag}</div>
+        </div>
+        <div class="card-desc">${d.desc}</div>
+        <div class="card-metrics">COST: ${formatMoney(d.cost)} // REV: +${formatMoney(d.cashflow)}/s</div>
+        <button id="btn-${d.id}" class="action-btn" ${isOwned ? 'disabled' : ''} onclick="buyDirective('${d.id}')">
+          ${isOwned ? '✓ OPERATION ACTIVE' : 'AUTHORIZE ACQUISITION'}
+        </button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  window.buyDirective = function(id) {
+    const d = directives.find(item => item.id === id);
+    if (!d || state.capital < d.cost || state.purchased.has(id)) return;
+
+    triggerFeedback(1100);
+    state.capital -= d.cost;
+    state.netWorth += d.cost * 1.5;
+    state.cashflow += d.cashflow;
+    state.tapValue += Math.round(d.cashflow * 0.1);
+    state.influence += d.influence;
+    state.sentiment += d.sentiment;
+    state.shadow += d.shadow;
+    state.purchased.add(id);
+
+    document.getElementById('tap-reward').innerText = `+${formatMoney(state.tapValue)}`;
+
+    logEvent(d.log, 'success');
+    renderDirectives();
+    updateUI();
+  };
+
+  // CLOCK LOOP (1 SECOND)
+  setInterval(() => {
+    state.capital += state.cashflow;
+    state.netWorth += state.cashflow;
+    state.quarter++;
+    if (state.quarter > 4) {
+      state.quarter = 1;
+      state.year++;
+      runRandomEvent();
+    }
+    updateUI();
+  }, 1000);
+
+  function runRandomEvent() {
+    const events = [
+      { msg: "Antitrust regulators launch probe into data monopoly.", type: "warn", run: () => { state.sentiment -= 4; } },
+      { msg: "Global philanthropic campaign boosts public favorability.", type: "success", run: () => { state.sentiment += 6; } },
+      { msg: "Cerberus intercepts silence uncooperative cabinet minister.", type: "crit", run: () => { state.influence += 3; state.shadow += 3; } },
+      { msg: "Tech bull cycle surges equity valuations.", type: "success", run: () => { state.capital += state.cashflow * 2; } }
+    ];
+    const ev = events[Math.floor(Math.random() * events.length)];
+    ev.run();
+    logEvent(ev.msg, ev.type);
+  }
+
+  function checkEndGame() {
+    if (state.influence >= 100 && state.netWorth >= 1e12) {
+      showModal("VICTORY: PLANETARY HEGEMON", "All critical energy grids, sovereign central banks, and defense communications now resolve through your private architecture. You control the world order.");
+    } else if (state.sentiment <= 0 && state.shadow >= 70) {
+      showModal("DEFEAT: STATE SEIZURE", "Your covert operations were fully exposed before achieving systemic hegemony. Sovereign alliances froze all holding accounts.");
+    }
+  }
+
+  function showModal(title, desc) {
+    const c = document.getElementById('modal-container');
+    c.innerHTML = `
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <h2 style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:16px; margin-bottom:8px;">${title}</h2>
+          <p style="color:#94a3b8; font-size:12px; line-height:1.4; margin-bottom:16px;">${desc}</p>
+          <button class="action-btn" onclick="location.reload()">REPLAY SIMULATION</button>
+        </div>
+      </div>
+    `;
+  }
+
+  // INITIALIZE
+  renderDirectives();
+  logEvent("Cerberus Mobile Node online. Session encrypted.", "normal");
+  updateUI();
+</script>
+</body>
+</html>
