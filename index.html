@@ -18,6 +18,9 @@
       --accent-cyan: #00e5ff;
       --accent-purple: #c084fc;
       --accent-blue: #3b82f6;
+      --accent-pink: #f43f5e;
+      --accent-gold: #facc15;
+      --accent-spotify: #1db954;
       --text-main: #f8fafc;
       --text-muted: #64748b;
       --border: #1e293b;
@@ -42,11 +45,11 @@
       flex-direction: column;
       padding: max(env(safe-area-inset-top), 6px) 10px max(env(safe-area-inset-bottom), 8px) 10px;
       overflow: hidden;
-      max-width: 920px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
-    /* TICKER */
+    /* TOP LIVE TICKER */
     .ticker-bar {
       background: #000;
       border: 1px solid var(--border);
@@ -61,7 +64,7 @@
     }
     .ticker-inner {
       display: inline-block;
-      animation: ticker 34s linear infinite;
+      animation: ticker 35s linear infinite;
     }
     @keyframes ticker {
       0% { transform: translateX(100%); }
@@ -75,7 +78,7 @@
       border-radius: 12px;
       padding: 10px 12px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
       gap: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       flex-shrink: 0;
@@ -88,7 +91,8 @@
     .val-cyan { color: var(--accent-cyan); }
     .val-amber { color: var(--accent-amber); }
     .val-purple { color: var(--accent-purple); }
-    .val-blue { color: var(--accent-blue); }
+    .val-gold { color: var(--accent-gold); }
+    .val-pink { color: var(--accent-pink); }
     .val-red { color: var(--accent-red); }
 
     .bar-container {
@@ -146,6 +150,27 @@
       justify-content: center;
       cursor: pointer;
       font-size: 15px;
+    }
+    .aux-btn.spotify-active {
+      border-color: var(--accent-spotify);
+      color: var(--accent-spotify);
+    }
+
+    /* SPOTIFY DRAWER */
+    #spotify-drawer {
+      display: none;
+      background: var(--bg-panel);
+      border: 1px solid var(--accent-spotify);
+      border-radius: 12px;
+      padding: 10px;
+      margin-bottom: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      flex-shrink: 0;
+    }
+    #spotify-drawer.open {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
     /* SCROLLABLE VIEWPORT */
@@ -205,48 +230,12 @@
     .btn-sell { border-color: var(--accent-amber); color: var(--accent-amber); }
     .btn-short { border-color: var(--accent-red); color: var(--accent-red); }
     .btn-raid { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .btn-gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+    .btn-pink { border-color: var(--accent-pink); color: var(--accent-pink); }
+    .btn-purple { border-color: var(--accent-purple); color: var(--accent-purple); }
     .btn-takeover { grid-column: span 2; border-color: #a855f7; color: #d8b4fe; background: #2e1065; }
-    .btn-bailout {
-      grid-column: span 2;
-      border: 1px solid var(--accent-red);
-      color: #fff;
-      background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%);
-      animation: pulseAlert 1.5s infinite;
-    }
-    @keyframes pulseAlert {
-      0% { opacity: 0.9; }
-      50% { opacity: 1; box-shadow: 0 0 12px rgba(255, 51, 68, 0.4); }
-      100% { opacity: 0.9; }
-    }
 
-    .action-btn {
-      width: 100%;
-      min-height: 40px;
-      background: #1e293b;
-      color: var(--accent-cyan);
-      border: 1px solid var(--accent-cyan);
-      border-radius: 6px;
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      font-weight: 700;
-      text-transform: uppercase;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-    .action-btn:active:not(:disabled) {
-      transform: scale(0.98);
-      background: var(--accent-cyan);
-      color: #000;
-    }
-    .action-btn:disabled {
-      opacity: 0.3;
-      border-color: var(--border);
-      color: var(--text-muted);
-      cursor: not-allowed;
-    }
-
-    /* GRID 2 */
-    .stock-grid-2 {
+    .grid-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 5px;
@@ -266,6 +255,8 @@
     .log-entry.crit { border-left-color: var(--accent-red); }
     .log-entry.success { border-left-color: var(--accent-green); }
     .log-entry.ai { border-left-color: var(--accent-purple); }
+    .log-entry.media { border-left-color: var(--accent-pink); }
+    .log-entry.gold { border-left-color: var(--accent-gold); }
 
     .stat-row {
       background: var(--bg-card);
@@ -279,7 +270,7 @@
       font-size: 11.5px;
     }
 
-    /* BOTTOM NAV */
+    /* BOTTOM NAV BAR */
     .bottom-nav {
       display: flex;
       background: var(--bg-panel);
@@ -290,6 +281,7 @@
       flex-shrink: 0;
       margin-top: 4px;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .nav-item {
       flex: 1;
@@ -343,156 +335,167 @@
 
   <div class="ticker-bar">
     <div class="ticker-inner" id="market-ticker">
-      FRONTIER AI BENCHMARKS ACTIVE // SOVEREIGN CONTRACT BIDDING OPEN // GPU SUPERCLUSTERS ONLINE // PROCEDURAL EQUITIES RUNNING
+      MEDIA STUDIOS ACTIVE // TALENT SCOUTING PIPELINE ONLINE // MACRO REGIME: TECH BULL MANIA // STARTUP ACCELERATOR RUNNING
     </div>
   </div>
 
   <header class="hud">
     <div class="hud-block">
       <span class="hud-label">Capital (Cash)</span>
-      <span class="hud-val val-green" id="ui-capital">$50.0M</span>
-      <span class="hud-label" id="ui-cashflow" style="color:var(--accent-green); margin-top:1px;">+$1.2M/s</span>
+      <span class="hud-val val-green" id="ui-capital">$25.0K</span>
+      <span class="hud-label" id="ui-cashflow" style="color:var(--accent-green); margin-top:1px;">+$120/s</span>
     </div>
     <div class="hud-block">
       <span class="hud-label">Net Worth / Stage</span>
-      <span class="hud-val val-cyan" id="ui-networth">$150.0M</span>
-      <span class="hud-label" id="ui-stage" style="color:var(--text-muted); margin-top:1px;">Stage I</span>
+      <span class="hud-val val-cyan" id="ui-networth">$50.0K</span>
+      <span class="hud-label" id="ui-stage" style="color:var(--text-muted); margin-top:1px;">Garage Era</span>
     </div>
     <div class="hud-block">
-      <span class="hud-label">Hegemony / AI ELO</span>
-      <span class="hud-val val-purple" id="ui-ai-elo">1,200 ELO</span>
+      <span class="hud-label">Media & Stars</span>
+      <span class="hud-val val-pink" id="ui-talent-count">0 Signed</span>
       <div class="bar-container">
-        <div class="bar-fill" id="bar-influence" style="width: 1%; background: var(--accent-amber);"></div>
+        <div class="bar-fill" id="bar-influence" style="width: 1%; background: var(--accent-pink);"></div>
       </div>
     </div>
     <div class="hud-block">
-      <span class="hud-label">Trust / Shadow Index</span>
-      <span class="hud-val" id="ui-trust-shadow" style="font-size: 13px;">65% / 5%</span>
+      <span class="hud-label">Trust / Heat Index</span>
+      <span class="hud-val" id="ui-trust-shadow" style="font-size: 13px;">70% / 0%</span>
       <div class="bar-container">
-        <div class="bar-fill" id="bar-trust" style="width: 65%; background: var(--accent-green);"></div>
+        <div class="bar-fill" id="bar-trust" style="width: 70%; background: var(--accent-green);"></div>
       </div>
     </div>
   </header>
 
   <div class="tap-action-bar">
     <button class="tap-btn" onclick="triggerManualSiphon()">
-      <span>⚡ Siphon Liquidity</span>
-      <span id="tap-reward" style="font-size: 9.5px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 5px; border-radius:4px;">+$250K</span>
+      <span>⚡ Hustle & Siphon</span>
+      <span id="tap-reward" style="font-size: 9.5px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 5px; border-radius:4px;">+$500</span>
     </button>
-    <button class="aux-btn" onclick="toggleMute()" id="mute-btn" title="Audio">🔊</button>
+    <button class="aux-btn" onclick="toggleSpotifyDrawer()" id="spotify-toggle-btn" title="Spotify Radio">📻</button>
+    <button class="aux-btn" onclick="toggleMute()" id="mute-btn" title="Sound FX">🔊</button>
     <button class="aux-btn" onclick="confirmReset()" title="Reset">🔄</button>
   </div>
 
-  <main class="viewport">
-    <div id="view-ops" class="view-tab active">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Priority Strategic Operations</span>
-        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="generateDirectiveBatch(true)">⚡ Scan Intel</button>
+  <div id="spotify-drawer">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+      <span style="font-size:10px; font-family:var(--font-mono); color:var(--accent-spotify); font-weight:bold;">🟢 SPOTIFY RADIO // BIGXTHAPLUG & DRIFT</span>
+      <div style="display:flex; gap:4px;">
+        <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--accent-spotify); color:var(--accent-spotify);" onclick="setSpotifyTrack('bigx')">BigXthaPlug</button>
+        <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--border);" onclick="setSpotifyTrack('texas')">Texas Trap</button>
+        <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--border);" onclick="setSpotifyTrack('phonk')">Drift Phonk</button>
+        <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--accent-red); color:var(--accent-red);" onclick="toggleSpotifyDrawer()">✕</button>
       </div>
-      <div id="directives-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+    <iframe id="spotify-iframe" style="border-radius:8px; border:none; width:100%; height:80px;" src="https://open.spotify.com/embed/artist/3jK8Z1Yx4xJvSg1QZ2dO8K?utm_source=generator&theme=0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+  </div>
+
+  <main class="viewport">
+    <div id="view-studios" class="view-tab active">
+      <div class="card" style="border-color:var(--accent-pink); background:rgba(244, 63, 94, 0.04);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--accent-pink);">🎙️ Media Labels & Hollywood Studios</div>
+            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">OWN PRODUCTION HOUSES TO SIGN ARTISTS & MOVIE STARS</div>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:4px;">
+          <button class="btn-sm btn-pink" id="btn-label" onclick="buyStudio('recordLabel', 150000, 3500)">
+            🎧 RECORD LABEL ($150K)
+          </button>
+          <button class="btn-sm btn-pink" id="btn-movie" onclick="buyStudio('filmStudio', 750000, 18000)">
+            🎬 MOVIE STUDIO ($750K)
+          </button>
+          <button class="btn-sm btn-pink" id="btn-agency" onclick="buyStudio('talentAgency', 2500000, 60000)">
+            🌟 TALENT AGENCY ($2.5M)
+          </button>
+          <button class="btn-sm btn-pink" id="btn-stream" onclick="buyStudio('streamPlatform', 15000000, 450000)">
+            📺 STREAMING NETWORK ($15M)
+          </button>
+        </div>
+      </div>
+
+      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-top:2px;">
+        Signed Talent Roster & Productions
+      </div>
+      <div id="signed-talent-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; margin-bottom:2px;">
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Scouting Pipeline (Auto-Refreshing)</span>
+        <button class="btn-sm btn-pink" style="padding:2px 8px;" onclick="spawnNewTalent(true)">+ Scout New Talent</button>
+      </div>
+      <div id="scouted-talent-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="view-venture" class="view-tab">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">High-Stakes Seed Stage Startups</span>
+        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-pink); color:var(--accent-pink);" onclick="spawnNewStartup(true)">+ Scout Pitch Deck</button>
+      </div>
+      <div id="startups-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <div id="view-ai" class="view-tab">
       <div class="card" style="border-color:var(--accent-purple); background:rgba(192, 132, 252, 0.04);">
         <div class="card-header">
           <div>
-            <div class="card-title" style="color:var(--accent-purple);">🧠 Frontier AI Lab: Project Cerberus-AGI</div>
-            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">SCALING LAWS: <span id="ai-training-status">OPTIMAL</span></div>
+            <div class="card-title" style="color:var(--accent-purple);">🧠 Frontier AI Lab: Project Cerberus</div>
+            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">BENCHMARK: <span id="ai-model-elo">1,000 ELO</span></div>
           </div>
-          <span class="card-badge" id="ai-rank-badge" style="background:#3b0764; color:#d8b4fe;">RANK #2</span>
-        </div>
-        <div class="card-desc">Invest in GPU superclusters, multimodal datasets, and post-training alignment to build the world's most intelligent AI model.</div>
-        
-        <div class="stat-row" style="margin:2px 0;">
-          <span>MODEL BENCHMARK (ELO)</span>
-          <span id="ai-model-elo" style="color:var(--accent-purple); font-weight:bold;">1,200 ELO</span>
+          <span class="card-badge" id="ai-rank-badge" style="background:#3b0764; color:#d8b4fe;">RANK #4</span>
         </div>
         <div class="stat-row" style="margin:2px 0;">
-          <span>COMPUTE FLEET</span>
-          <span id="ai-compute-stat" style="color:var(--accent-cyan); font-weight:bold;">10 H100 Clusters</span>
+          <span>COMPUTE CAPACITY</span>
+          <span id="ai-compute-stat" style="color:var(--accent-cyan); font-weight:bold;">1 Cluster</span>
         </div>
         <div class="stat-row" style="margin:2px 0;">
           <span>DATASET VOLUME</span>
-          <span id="ai-data-stat" style="color:var(--accent-amber); font-weight:bold;">2.5T Tokens</span>
+          <span id="ai-data-stat" style="color:var(--accent-amber); font-weight:bold;">0.5T Tokens</span>
         </div>
         <div class="stat-row" style="margin:2px 0;">
-          <span>GLOBAL API MONETIZATION</span>
-          <span id="ai-revenue-stat" style="color:var(--accent-green); font-weight:bold;">+$1.5M / sec</span>
+          <span>API REVENUE YIELD</span>
+          <span id="ai-revenue-stat" style="color:var(--accent-green); font-weight:bold;">+$50 / sec</span>
         </div>
-
-        <div class="stock-grid-2" style="margin-top:6px;">
+        <div class="grid-2" style="margin-top:6px;">
           <button class="btn-sm" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="investInAI('compute')">
-            ⚡ EXPAND GPU FLEET (<span id="ai-cost-compute">$30.0M</span>)
+            ⚡ EXPAND COMPUTE (<span id="ai-cost-compute">$50K</span>)
           </button>
           <button class="btn-sm" style="border-color:var(--accent-amber); color:var(--accent-amber);" onclick="investInAI('data')">
-            📊 ACQUIRE TOKENS (<span id="ai-cost-data">$20.0M</span>)
+            📊 SCRAPE DATA (<span id="ai-cost-data">$25K</span>)
           </button>
           <button class="btn-sm" style="border-color:var(--accent-blue); color:var(--accent-blue);" onclick="investInAI('rlhf')">
-            🔬 RLHF ALIGNMENT (<span id="ai-cost-rlhf">$25.0M</span>)
+            🔬 RLHF ALIGN (<span id="ai-cost-rlhf">$40K</span>)
           </button>
           <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple);" onclick="investInAI('train')">
-            🔥 FRONTIER TRAINING RUN (<span id="ai-cost-train">$50.0M</span>)
+            🔥 TRAINING RUN (<span id="ai-cost-train">$80K</span>)
           </button>
         </div>
       </div>
-
       <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-top:4px;">
-        Global Frontier AI Benchmark Leaderboard
+        Global Frontier AI Leaderboard
       </div>
       <div id="ai-leaderboard" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
 
-    <div id="view-contracts" class="view-tab">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Government & Defense Bidding Desk</span>
-        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-blue); color:var(--accent-blue);" onclick="spawnNewContract(true)">+ Scan Procurement</button>
-      </div>
-      <div id="contracts-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
     <div id="view-market" class="view-tab">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Equities & Corporate Targets</span>
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Global Equities & M&A Targets</span>
         <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-green); color:var(--accent-green);" onclick="spawnNewStock(true)">+ Scan IPO Pipeline</button>
       </div>
       <div id="market-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
-    <div id="view-nations" class="view-tab">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Sovereign Debt Desk & Annexation</span>
-        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-purple); color:var(--accent-purple);" onclick="spawnNewNation(true)">+ Scan Distressed States</button>
+    <div id="view-megaprojects" class="view-tab">
+      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">
+        Multi-Trillion Planetary Megaprojects
       </div>
-      <div id="nations-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div id="megaprojects-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <div id="view-rivals" class="view-tab">
       <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">
-        Rival Mega-Conglomerates
+        Rival Conglomerates (Building & Buying Out)
       </div>
       <div id="rivals-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
-    <div id="view-prestige" class="view-tab">
-      <div class="card" style="border-color:var(--accent-purple); background:rgba(192, 132, 252, 0.04);">
-        <div class="card-header">
-          <div class="card-title" style="color:var(--accent-purple);">🧬 The Great Reset Protocol</div>
-          <span class="card-badge" style="background:#3b0764; color:#d8b4fe;">NEW GAME+</span>
-        </div>
-        <div class="card-desc">Collapse the global financial order and rebuild from the shadows. Convert your lifetime Net Worth into permanent <b>Shadow Tokens ($\Omega$)</b> to unlock Black Market legacy technologies.</div>
-        <div class="stat-row" style="margin:4px 0;">
-          <span>AVAILABLE SHADOW TOKENS</span>
-          <span id="prestige-tokens-avail" style="color:var(--accent-purple); font-weight:bold;">0 $\Omega$</span>
-        </div>
-        <button class="action-btn" style="border-color:var(--accent-purple); color:var(--accent-purple);" onclick="triggerGreatReset()">
-          INITIALIZE THE GREAT RESET
-        </button>
-      </div>
-
-      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-top:4px;">
-        Black Market Legacy Upgrades
-      </div>
-      <div id="legacy-upgrades-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
     <div id="view-intel" class="view-tab">
@@ -501,60 +504,52 @@
 
     <div id="view-empire" class="view-tab">
       <div class="stat-row">
+        <span>MACRO REGIME</span>
+        <span id="empire-macro-regime" style="color:var(--accent-green); font-weight:bold;">TECH BULL MANIA</span>
+      </div>
+      <div class="stat-row">
         <span>TIMELINE</span>
         <span id="empire-date" style="color:var(--accent-cyan);">2004.Q1</span>
       </div>
       <div class="stat-row">
-        <span>PORTFOLIO VALUE</span>
+        <span>PORTFOLIO ASSETS VALUE</span>
         <span id="empire-stock-equity" style="color:var(--accent-green);">$0</span>
       </div>
       <div class="stat-row">
-        <span>PRIVATIZED NATIONS</span>
-        <span id="empire-nations-count" style="color:var(--accent-purple);">0</span>
+        <span>SIGNED ARTISTS & STARS</span>
+        <span id="empire-talent-count" style="color:var(--accent-pink);">0</span>
       </div>
       <div class="stat-row">
-        <span>GOV CONTRACTS HELD</span>
-        <span id="empire-contracts-count" style="color:var(--accent-blue);">0</span>
-      </div>
-      <div class="stat-row">
-        <span>DEFEATED RIVALS</span>
-        <span id="empire-rivals-defeated" style="color:var(--accent-red);">0 / 3</span>
-      </div>
-      <div class="stat-row">
-        <span>TOTAL CASHFLOW</span>
-        <span id="empire-rate" style="color:var(--accent-amber);">+$1.2M / sec</span>
+        <span>TOTAL EMPIRE CASHFLOW</span>
+        <span id="empire-rate" style="color:var(--accent-amber);">+$120 / sec</span>
       </div>
     </div>
   </main>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchNav('ops', this)">
-      <span style="font-size:12px;">🏢</span>
-      <span>Directives</span>
+    <button class="nav-item active" onclick="switchNav('studios', this)">
+      <span style="font-size:12px;">🎙️</span>
+      <span>Studios</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('venture', this)">
+      <span style="font-size:12px;">🚀</span>
+      <span>Venture</span>
     </button>
     <button class="nav-item" onclick="switchNav('ai', this)">
       <span style="font-size:12px;">🧠</span>
-      <span>AI Race</span>
-    </button>
-    <button class="nav-item" onclick="switchNav('contracts', this)">
-      <span style="font-size:12px;">📜</span>
-      <span>Contracts</span>
+      <span>AI Lab</span>
     </button>
     <button class="nav-item" onclick="switchNav('market', this)">
       <span style="font-size:12px;">📈</span>
       <span>Markets</span>
     </button>
-    <button class="nav-item" onclick="switchNav('nations', this)">
-      <span style="font-size:12px;">🌍</span>
-      <span>Nations</span>
+    <button class="nav-item" onclick="switchNav('megaprojects', this)">
+      <span style="font-size:12px;">🏛️</span>
+      <span>Projects</span>
     </button>
     <button class="nav-item" onclick="switchNav('rivals', this)">
       <span style="font-size:12px;">⚔️</span>
       <span>Rivals</span>
-    </button>
-    <button class="nav-item" onclick="switchNav('prestige', this)">
-      <span style="font-size:12px;">🧬</span>
-      <span>Reset</span>
     </button>
     <button class="nav-item" onclick="switchNav('intel', this)">
       <span style="font-size:12px;">📡</span>
@@ -569,63 +564,99 @@
   <div id="modal-container"></div>
 
 <script>
-  const STORAGE_KEY = "GLOBAL_CAPITAL_V6_PURE_AI";
+  const STORAGE_KEY = "GLOBAL_CAPITAL_V10_STUDIO_REAL";
 
-  // GENERATOR DICTIONARIES
+  // SPOTIFY RADIO
+  const spotifyPlaylists = {
+    bigx: "https://open.spotify.com/embed/artist/3jK8Z1Yx4xJvSg1QZ2dO8K?utm_source=generator&theme=0",
+    texas: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd?utm_source=generator&theme=0",
+    phonk: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
+  };
+
+  function toggleSpotifyDrawer() {
+    const drawer = document.getElementById('spotify-drawer');
+    const btn = document.getElementById('spotify-toggle-btn');
+    drawer.classList.toggle('open');
+    btn.classList.toggle('spotify-active');
+  }
+
+  function setSpotifyTrack(key) {
+    const iframe = document.getElementById('spotify-iframe');
+    if (spotifyPlaylists[key]) {
+      iframe.src = spotifyPlaylists[key];
+      logEvent(`SPOTIFY RADIO: Switched stream to ${key.toUpperCase()}.`, "normal");
+    }
+  }
+
+  // MACRO REGIMES
+  const macroRegimes = [
+    { name: "TECH BULL MANIA", icon: "🔥", mult: 1.3, interest: 0.05, ventureOdds: 0.18, log: "MACRO SHIFT: Global venture capital booming." },
+    { name: "GOLDILOCKS EXPANSION", icon: "⚖️", mult: 1.0, interest: 0.07, ventureOdds: 0.10, log: "MACRO SHIFT: Balanced corporate earnings." },
+    { name: "LIQUIDITY FREEZE", icon: "📉", mult: 0.65, interest: 0.12, ventureOdds: 0.04, log: "CRISIS SHIFT: Tech valuations compressing!" },
+    { name: "STAGFLATION SQUEEZE", icon: "⚡", mult: 0.8, interest: 0.14, ventureOdds: 0.06, log: "MACRO SHIFT: Rising debt costs." }
+  ];
+
+  // TALENT FIRST & LAST NAMES
+  const artistFirstNames = ["T-Rex", "Young", "Lil", "Big", "K-Dot", "Nova", "Saint", "Vee", "Baby", "Slick", "Trap", "King"];
+  const artistLastNames = ["Draco", "Plug", "Flacko", "Cartel", "Savage", "Glock", "Smiley", "Prime", "Bandz", "Da Beast"];
+  const movieStars = [
+    { name: "Dominic 'The Hammer' Vance", type: "Action Superstar", cost: 1200000, fee: 35000 },
+    { name: "Elena Rostova", type: "Oscar-Winning Actress", cost: 2500000, fee: 75000 },
+    { name: "Marcus Sterling", type: "Sci-Fi Franchise Lead", cost: 4000000, fee: 120000 },
+    { name: "Sora Takahashi", type: "Martial Arts Icon", cost: 900000, fee: 28000 }
+  ];
+
   const stockPrefixes = ["Aero", "Omni", "Vanguard", "Apex", "Cyber", "Bio", "Quantum", "Orbital", "Titan", "Neural", "Helios", "Aegis", "Nova", "Synapse"];
   const stockRoots = ["Dynamics", "Holdings", "Energy", "Systems", "Pharma", "Logistics", "Robotics", "Defense", "Networks", "Capital", "Intelligence"];
   const sectors = ["Defense", "Energy", "Bio-Tech", "Cloud", "Cyber", "Aerospace", "Finance"];
 
-  const countryPrefixes = ["Republic of", "Kingdom of", "Federation of", "State of", "Sovereign Islands of"];
-  const countryNames = ["Valoria", "Krestov", "Oakhaven", "Solaria", "Zandor", "San Marino Prime", "Veridia", "Arcturus", "Khandar", "Isla Del Rey"];
-
-  const contractAgencies = ["Pentagon Autonomous Defense Fleet", "NATO Sovereign Cloud Grid", "G7 CBDC Settlement Engine", "Planetary Satellite Telemetry", "European Cyber Defense Grid", "WHO Bio-Surveillance Core"];
-
-  const legacyUpgradesData = [
-    { id: "siphon_mult", name: "Quantum Frontrunner Siphon", desc: "Gain +150% manual siphon liquidity yield per level.", cost: 1, level: 0 },
-    { id: "shadow_shield", name: "Diplomatic Immunity Shroud", desc: "Reduces Shadow Index heat gain from illegal actions by 25% per level.", cost: 2, level: 0 },
-    { id: "dividend_tap", name: "Dark Pool Dividend Monopolizer", desc: "Increases passive cash flow from all holdings by +30% per level.", cost: 2, level: 0 },
-    { id: "starting_influence", name: "Sub-Rosa Blackmail Archive", desc: "Begin each run with +10% base Hegemony and +$50M liquid capital.", cost: 3, level: 0 }
+  const defaultMegaprojects = [
+    { id: "PANAMA_CANAL", title: "Privatize Panama & Suez Canals", cost: 45000000000, revenue: 1800000000, influence: 18, desc: "Toll 12% of maritime shipping.", owned: false },
+    { id: "ORBITAL_SOLAR", title: "Planetary Microwave Solar Reflector", cost: 120000000000, revenue: 5500000000, influence: 22, desc: "Beam gigawatts of wireless power to continents.", owned: false },
+    { id: "SHADOW_FLEET", title: "Vanguard Nuclear PMC Strike Fleet", cost: 80000000000, revenue: 3200000000, influence: 20, desc: "Stealth supercarriers & nuclear subs.", owned: false }
   ];
 
   const defaultRivals = [
-    { id: "RIV_1", name: "Lord Sterling (Old Money Cartel)", netWorth: 250000000, influence: 14, hostility: "Medium", defeated: false, revenue: 8000000, aiModel: "AegisMind-V", aiElo: 1180, compute: 8 },
-    { id: "RIV_2", name: "Kaelen Vance (Tech Monopolist)", netWorth: 600000000, influence: 28, hostility: "High", defeated: false, revenue: 20000000, aiModel: "Nexus-X Frontier", aiElo: 1320, compute: 22 },
-    { id: "RIV_3", name: "General Zhao (Sovereign Defense)", netWorth: 1800000000, influence: 45, hostility: "Extreme", defeated: false, revenue: 55000000, aiModel: "DragonCore Quantum", aiElo: 1260, compute: 15 }
+    { id: "RIV_1", name: "Sterling Media & Capital", netWorth: 180000, influence: 2, defeated: false, revenue: 450, aiModel: "Aegis-1", aiElo: 1050 },
+    { id: "RIV_2", name: "Vance Tech Labs", netWorth: 450000, influence: 5, defeated: false, revenue: 1200, aiModel: "Nexus-Mini", aiElo: 1120 },
+    { id: "RIV_3", name: "Zhao Defense Group", netWorth: 1200000, influence: 10, defeated: false, revenue: 3500, aiModel: "DragonCore-0", aiElo: 1080 }
   ];
 
   const defaultState = {
-    capital: 50000000,
-    netWorth: 150000000,
-    baseCashflow: 1200000,
-    tapValue: 250000,
+    capital: 25000, // Starts small like Microsoft/Facebook in garage
+    netWorth: 50000,
+    baseCashflow: 120,
+    tapValue: 500,
     influence: 1,
-    sentiment: 65,
-    shadow: 5,
+    sentiment: 70,
+    shadow: 0,
     year: 2004,
     quarter: 1,
-    shadowTokens: 0,
-    prestigeCount: 0,
-    // PURE MERIT-BASED AI ENGINE
-    ai: {
-      modelName: "Cerberus-AGI Core",
-      elo: 1200,
-      compute: 10,
-      tokens: 2.5,
-      rlhfLevel: 1,
-      computeCost: 30000000,
-      dataCost: 20000000,
-      rlhfCost: 25000000,
-      trainCost: 50000000,
-      apiRevenue: 1500000
+    macroIndex: 0,
+    studios: {
+      recordLabel: false,
+      filmStudio: false,
+      talentAgency: false,
+      streamPlatform: false
     },
-    contracts: [],
-    legacyUpgrades: legacyUpgradesData,
-    directives: [],
-    completedDirectives: 0,
+    signedTalent: [],
+    scoutedTalent: [],
+    startups: [],
     stocks: [],
-    nations: [],
+    megaprojects: defaultMegaprojects,
     rivals: defaultRivals,
+    ai: {
+      modelName: "Cerberus-Core",
+      elo: 1000,
+      compute: 1,
+      tokens: 0.5,
+      rlhfLevel: 1,
+      computeCost: 50000,
+      dataCost: 25000,
+      rlhfCost: 40000,
+      trainCost: 80000,
+      apiRevenue: 50
+    },
     muted: false
   };
 
@@ -635,11 +666,11 @@
     if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
     if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
     if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
-    if (num >= 1e3) return `$${(num / 1e3).toFixed(0)}K`;
+    if (num >= 1e3) return `$${(num / 1e3).toFixed(1)}K`;
     return `$${Math.round(num).toLocaleString()}`;
   };
 
-  // AUDIO
+  // AUDIO FX
   let audioCtx = null;
   function triggerAudio(freq = 750) {
     if (state.muted) return;
@@ -674,9 +705,7 @@
 
   window.triggerManualSiphon = function() {
     triggerAudio(950);
-    const siphonBoost = 1 + (getLegacyLevel("siphon_mult") * 1.5);
-    const gain = state.tapValue * siphonBoost;
-    state.capital += gain;
+    state.capital += state.tapValue;
     updateUI();
   };
 
@@ -688,48 +717,235 @@
     feed.insertBefore(entry, feed.firstChild);
   }
 
-  function getLegacyLevel(id) {
-    const up = state.legacyUpgrades.find(u => u.id === id);
-    return up ? up.level : 0;
+  // --- STUDIO & TALENT MANAGEMENT SYSTEM ---
+  window.buyStudio = function(type, cost, revenueYield) {
+    if (state.capital < cost || state.studios[type]) return;
+    triggerAudio(1200);
+    state.capital -= cost;
+    state.studios[type] = true;
+    state.baseCashflow += revenueYield;
+    state.influence += 3;
+
+    logEvent(`ACQUISITION: Built/Acquired ${type.toUpperCase()}! Added +${formatMoney(revenueYield)}/s base revenue.`, "media");
+    updateUI();
+    saveGame();
+  };
+
+  function createRandomTalent() {
+    const isArtist = Math.random() < 0.6;
+    if (isArtist) {
+      const f = artistFirstNames[Math.floor(Math.random() * artistFirstNames.length)];
+      const l = artistLastNames[Math.floor(Math.random() * artistLastNames.length)];
+      const bonus = Math.floor(Math.random() * 80000 + 20000);
+      const streamingYield = Math.round(bonus * 0.04);
+      return {
+        id: "ART_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        name: `${f} ${l}`,
+        category: "Rapper / Producer",
+        signingBonus: bonus,
+        weeklyRoyalties: streamingYield,
+        hype: Math.floor(Math.random() * 50 + 50),
+        projectsReleased: 0,
+        signed: false
+      };
+    } else {
+      const star = movieStars[Math.floor(Math.random() * movieStars.length)];
+      return {
+        id: "ACT_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+        name: star.name,
+        category: star.type,
+        signingBonus: star.cost,
+        weeklyRoyalties: star.fee,
+        hype: Math.floor(Math.random() * 40 + 60),
+        projectsReleased: 0,
+        signed: false
+      };
+    }
   }
 
-  // --- MERIT-BASED AI TRAINING & SCALING ENGINE ---
+  function spawnNewTalent(manual = false) {
+    if (state.scoutedTalent.length >= 6) return;
+    const t = createRandomTalent();
+    state.scoutedTalent.push(t);
+    if (manual) {
+      triggerAudio(1000);
+      logEvent(`A&R REPORT: Scouted new talent: ${t.name} (${t.category}).`, "media");
+    }
+    renderTalentViews();
+  }
+
+  window.signTalent = function(id) {
+    const t = state.scoutedTalent.find(item => item.id === id);
+    if (!t || state.capital < t.signingBonus) return;
+
+    if (t.category.includes("Rapper") && !state.studios.recordLabel) {
+      alert("You need to own a Record Label ($150K) to sign music artists!");
+      return;
+    }
+    if (t.category.includes("Actor") || t.category.includes("Star")) {
+      if (!state.studios.filmStudio && !state.studios.talentAgency) {
+        alert("You need a Movie Studio or Talent Agency to sign film actors!");
+        return;
+      }
+    }
+
+    triggerAudio(1100);
+    state.capital -= t.signingBonus;
+    state.baseCashflow += t.weeklyRoyalties;
+    state.influence += 2;
+    t.signed = true;
+    state.signedTalent.push(t);
+    state.scoutedTalent = state.scoutedTalent.filter(item => item.id !== id);
+
+    logEvent(`CONTRACT SIGNED: ${t.name} joined your roster! Streaming/appearance revenue: +${formatMoney(t.weeklyRoyalties)}/s.`, "success");
+    updateUI();
+    saveGame();
+  };
+
+  window.dropProject = function(id) {
+    const t = state.signedTalent.find(item => item.id === id);
+    const prodCost = Math.round(t.signingBonus * 0.5);
+    if (!t || state.capital < prodCost) return;
+
+    triggerAudio(1300);
+    state.capital -= prodCost;
+    t.projectsReleased++;
+
+    // CONSUMER LOVE/HATE ROLL
+    const roll = Math.random();
+    let outcome = "";
+    let payout = 0;
+
+    if (roll < 0.25) {
+      outcome = "⚠️ CRITICAL FLOP: Critics panned the release. Modest streaming pickup.";
+      payout = Math.round(prodCost * 0.4);
+      triggerAudio(400);
+    } else if (roll < 0.70) {
+      outcome = "🎵 CHART HIT: Solid radio play and healthy box office returns!";
+      payout = Math.round(prodCost * 2.5);
+      t.weeklyRoyalties = Math.round(t.weeklyRoyalties * 1.3);
+      triggerAudio(1000);
+    } else {
+      outcome = "🔥 VIRAL PHENOMENON: #1 on Billboard & Global Box Office Smash!";
+      payout = Math.round(prodCost * 12.0);
+      t.weeklyRoyalties = Math.round(t.weeklyRoyalties * 2.5);
+      state.influence += 5;
+      triggerAudio(1400);
+    }
+
+    state.capital += payout;
+    state.baseCashflow += Math.round(t.weeklyRoyalties * 0.2);
+
+    logEvent(`RELEASE DROP [${t.name}]: ${outcome} Generated +${formatMoney(payout)} payout!`, "media");
+    updateUI();
+    saveGame();
+  };
+
+  function renderTalentViews() {
+    // Render Signed Roster
+    const signedContainer = document.getElementById('signed-talent-list');
+    signedContainer.innerHTML = '';
+
+    if (state.signedTalent.length === 0) {
+      signedContainer.innerHTML = `<div style="font-size:11px; color:var(--text-muted); font-style:italic; padding:6px;">No talent signed yet. Buy a label or studio above to scout talent.</div>`;
+    }
+
+    state.signedTalent.forEach(t => {
+      const prodCost = Math.round(t.signingBonus * 0.5);
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--accent-pink);">${t.name}</div>
+            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${t.category} // RELEASES: ${t.projectsReleased}</div>
+          </div>
+          <span class="card-badge" style="color:var(--accent-green);">+${formatMoney(t.weeklyRoyalties)}/s</span>
+        </div>
+        <div class="grid-2" style="margin-top:4px;">
+          <button class="btn-sm btn-pink" ${state.capital < prodCost ? 'disabled' : ''} onclick="dropProject('${t.id}')">
+            🚀 DROP ALBUM / MOVIE (${formatMoney(prodCost)})
+          </button>
+        </div>
+      `;
+      signedContainer.appendChild(card);
+    });
+
+    // Render Scouted Pipeline
+    const scoutedContainer = document.getElementById('scouted-talent-list');
+    scoutedContainer.innerHTML = '';
+
+    state.scoutedTalent.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="card-title">${t.name}</div>
+            <div style="font-size:9.5px; color:var(--accent-pink); font-family:var(--font-mono);">${t.category}</div>
+          </div>
+          <span class="card-badge">${formatMoney(t.signingBonus)} SIGNING BONUS</span>
+        </div>
+        <div class="card-desc">Projected ongoing royalties: +${formatMoney(t.weeklyRoyalties)}/s to holding balance.</div>
+        <div class="grid-2" style="margin-top:4px;">
+          <button class="btn-sm btn-buy" ${state.capital < t.signingBonus ? 'disabled' : ''} onclick="signTalent('${t.id}')">
+            ✍️ SIGN CONTRACT (${formatMoney(t.signingBonus)})
+          </button>
+        </div>
+      `;
+      scoutedContainer.appendChild(card);
+    });
+
+    // Update Studio Buttons
+    if (state.studios.recordLabel) {
+      document.getElementById('btn-label').innerText = "✓ RECORD LABEL OWNED";
+      document.getElementById('btn-label').disabled = true;
+    }
+    if (state.studios.filmStudio) {
+      document.getElementById('btn-movie').innerText = "✓ MOVIE STUDIO OWNED";
+      document.getElementById('btn-movie').disabled = true;
+    }
+    if (state.studios.talentAgency) {
+      document.getElementById('btn-agency').innerText = "✓ TALENT AGENCY OWNED";
+      document.getElementById('btn-agency').disabled = true;
+    }
+    if (state.studios.streamPlatform) {
+      document.getElementById('btn-stream').innerText = "✓ STREAMING NETWORK OWNED";
+      document.getElementById('btn-stream').disabled = true;
+    }
+  }
+
+  // --- AI LAB INVESTING ---
   window.investInAI = function(type) {
     if (type === 'compute') {
       if (state.capital < state.ai.computeCost) return;
       triggerAudio(1000);
       state.capital -= state.ai.computeCost;
-      state.ai.compute += 15;
+      state.ai.compute += 2;
       state.ai.elo += 15;
       state.ai.computeCost = Math.round(state.ai.computeCost * 1.4);
-      logEvent(`GPU CLUSTER DEPLOYED: Added +15 H100 Superclusters. Total Compute: ${state.ai.compute} Clusters.`, "ai");
     } else if (type === 'data') {
       if (state.capital < state.ai.dataCost) return;
       triggerAudio(900);
       state.capital -= state.ai.dataCost;
-      state.ai.tokens = +(state.ai.tokens + 3.0).toFixed(1);
-      state.ai.elo += 25;
+      state.ai.tokens = +(state.ai.tokens + 1.0).toFixed(1);
+      state.ai.elo += 20;
       state.ai.dataCost = Math.round(state.ai.dataCost * 1.35);
-      logEvent(`PRE-TRAINING DATA: Ingested +3.0T Multimodal Tokens. Corpus: ${state.ai.tokens}T Tokens.`, "ai");
     } else if (type === 'rlhf') {
       if (state.capital < state.ai.rlhfCost) return;
       triggerAudio(1100);
       state.capital -= state.ai.rlhfCost;
       state.ai.rlhfLevel += 1;
-      state.ai.elo += 35;
+      state.ai.elo += 30;
       state.ai.rlhfCost = Math.round(state.ai.rlhfCost * 1.4);
-      logEvent(`ALIGNMENT RESEARCH: Advanced RLHF Reasoning to Tier ${state.ai.rlhfLevel}. Benchmark: ${state.ai.elo} ELO.`, "ai");
     } else if (type === 'train') {
       if (state.capital < state.ai.trainCost) return;
       triggerAudio(1400);
       state.capital -= state.ai.trainCost;
-      
-      // Scaling Laws output based on compute, tokens, and alignment
-      const eloGain = Math.floor(Math.random() * 30 + 50) + Math.round((state.ai.compute * 1.5) + (state.ai.tokens * 4) + (state.ai.rlhfLevel * 10));
+      const eloGain = Math.floor(Math.random() * 20 + 35) + Math.round(state.ai.compute * 2);
       state.ai.elo += eloGain;
-      state.influence += 4;
-      state.ai.trainCost = Math.round(state.ai.trainCost * 1.55);
-      logEvent(`FRONTIER RUN CONVERGED: Parameters tuned successfully (+${eloGain} ELO). Benchmark: ${state.ai.elo} ELO!`, "success");
+      state.influence += 2;
+      state.ai.trainCost = Math.round(state.ai.trainCost * 1.5);
     }
 
     calculateAIRankings();
@@ -744,12 +960,11 @@
     ];
 
     allModels.sort((a, b) => b.elo - a.elo);
-
     const playerRank = allModels.findIndex(m => m.isPlayer) + 1;
     document.getElementById('ai-rank-badge').innerText = `RANK #${playerRank}`;
 
-    // Rank multipliers for API cashflow
-    state.ai.apiRevenue = Math.round((state.ai.elo * 4500) * (4 / playerRank));
+    const macroMult = macroRegimes[state.macroIndex].mult;
+    state.ai.apiRevenue = Math.round((state.ai.elo * 80 * macroMult) * (4 / playerRank));
 
     return allModels;
   }
@@ -774,95 +989,21 @@
     document.getElementById('ai-compute-stat').innerText = `${state.ai.compute} Clusters`;
     document.getElementById('ai-data-stat').innerText = `${state.ai.tokens}T Tokens`;
     document.getElementById('ai-revenue-stat').innerText = `+${formatMoney(state.ai.apiRevenue)} / sec`;
-    document.getElementById('ui-ai-elo').innerText = `${state.ai.elo} ELO (Rank #${leaderboard.findIndex(m => m.isPlayer) + 1})`;
     document.getElementById('ai-cost-compute').innerText = formatMoney(state.ai.computeCost);
     document.getElementById('ai-cost-data').innerText = formatMoney(state.ai.dataCost);
     document.getElementById('ai-cost-rlhf').innerText = formatMoney(state.ai.rlhfCost);
     document.getElementById('ai-cost-train').innerText = formatMoney(state.ai.trainCost);
   }
 
-  // --- CONTRACTS BIDDING SYSTEM ---
-  function createContract() {
-    const title = contractAgencies[Math.floor(Math.random() * contractAgencies.length)];
-    const val = Math.floor(Math.random() * 800000000 + 100000000);
-    const bidCost = Math.round(val * 0.3);
-    const rev = Math.round(val * 0.05);
-
-    return {
-      id: "CTR_" + Date.now() + "_" + Math.floor(Math.random() * 100),
-      title: title,
-      value: val,
-      bidCost: bidCost,
-      revenue: rev,
-      influence: Math.floor(Math.random() * 6 + 4),
-      held: false
-    };
-  }
-
-  function spawnNewContract(manual = false) {
-    if (state.contracts.length >= 6) return;
-    const c = createContract();
-    state.contracts.push(c);
-    if (manual) {
-      triggerAudio(1000);
-      logEvent(`PROCUREMENT ALERT: ${c.title} opened for bidding.`, "normal");
-    }
-    renderContracts();
-  }
-
-  window.bidOnContract = function(id) {
-    const c = state.contracts.find(item => item.id === id);
-    if (!c || state.capital < c.bidCost || c.held) return;
-
-    triggerAudio(1200);
-    state.capital -= c.bidCost;
-    state.baseCashflow += c.revenue;
-    state.influence += c.influence;
-    c.held = true;
-
-    logEvent(`CONTRACT SECURED: Awarded ${c.title}! Added +${formatMoney(c.revenue)}/s cashflow & +${c.influence}% Hegemony.`, "success");
-    updateUI();
-  };
-
-  function renderContracts() {
-    const container = document.getElementById('contracts-list');
-    container.innerHTML = '';
-
-    state.contracts.forEach(c => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title">${c.title}</div>
-            <div style="font-size:9.5px; color:var(--accent-blue); font-family:var(--font-mono);">SOVEREIGN PROCUREMENT</div>
-          </div>
-          ${c.held ? '<span class="card-badge" style="background:#1e3a8a; color:#93c5fd;">CONTRACT SECURED</span>' : `<span class="card-badge" style="color:var(--accent-blue);">${formatMoney(c.value)} VAL</span>`}
-        </div>
-        <div class="card-desc">Procurement yield: +${formatMoney(c.revenue)}/s revenue and +${c.influence}% Hegemony leverage.</div>
-        ${!c.held ? `
-        <button class="btn-sm" style="border-color:var(--accent-blue); color:var(--accent-blue);" ${state.capital < c.bidCost ? 'disabled' : ''} onclick="bidOnContract('${c.id}')">
-          SUBMIT SOVEREIGN BID (${formatMoney(c.bidCost)})
-        </button>
-        ` : `
-        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-blue); text-align:center; padding:4px; background:rgba(59,130,246,0.05); border-radius:4px;">
-          ✓ Servicing contract. Generating +${formatMoney(c.revenue)}/s cashflow.
-        </div>
-        `}
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  // --- PROCEDURAL STOCKS & NATIONS ---
+  // --- EQUITIES & STOCKS ---
   function createStock() {
     const prefix = stockPrefixes[Math.floor(Math.random() * stockPrefixes.length)];
     const root = stockRoots[Math.floor(Math.random() * stockRoots.length)];
     const id = (prefix.substring(0, 3) + root.substring(0, 1)).toUpperCase() + Math.floor(Math.random() * 89 + 10);
     const sector = sectors[Math.floor(Math.random() * sectors.length)];
-    const price = Math.floor(Math.random() * 260 + 30);
-    const totalShares = Math.floor(Math.random() * 800000 + 300000);
-    const revenue = Math.round((price * totalShares) * 0.025);
+    const price = Math.floor(Math.random() * 120 + 20);
+    const totalShares = Math.floor(Math.random() * 400000 + 100000);
+    const revenue = Math.round((price * totalShares) * 0.02);
 
     return {
       id: id,
@@ -882,81 +1023,16 @@
   }
 
   function spawnNewStock(manual = false) {
-    if (state.stocks.length >= 16) return;
+    if (state.stocks.length >= 12) return;
     const s = createStock();
     state.stocks.push(s);
     if (manual) {
       triggerAudio(1000);
-      logEvent(`IPO PIPELINE: ${s.name} (${s.id}) launched @ $${s.price}.`, "success");
+      logEvent(`IPO PIPELINE: ${s.name} (${s.id}) listed @ $${s.price}.`, "success");
     }
     renderMarket();
   }
 
-  function createNation() {
-    const prefix = countryPrefixes[Math.floor(Math.random() * countryPrefixes.length)];
-    const name = countryNames[Math.floor(Math.random() * countryNames.length)];
-    const debt = Math.floor(Math.random() * 8000000000 + 500000000);
-    const bondBlockCost = Math.round(debt * 0.2);
-
-    return {
-      id: "NAT_" + Date.now() + "_" + Math.floor(Math.random() * 100),
-      fullName: `${prefix} ${name}`,
-      totalDebt: debt,
-      bondsHeld: 0,
-      bondBlockCost: bondBlockCost,
-      taxRevenue: Math.round(debt * 0.04),
-      influenceReward: Math.floor(Math.random() * 10 + 10),
-      privatized: false
-    };
-  }
-
-  function spawnNewNation(manual = false) {
-    if (state.nations.length >= 8) return;
-    const nat = createNation();
-    state.nations.push(nat);
-    if (manual) {
-      triggerAudio(1100);
-      logEvent(`SOVEREIGN DESK: ${nat.fullName} issued debt tenders.`, "normal");
-    }
-    renderNations();
-  }
-
-  function createDirective() {
-    const verb = ["Subvert", "Monopolize", "Private Charter of", "Algorithmic Control of", "Hostile Securitization of"][Math.floor(Math.random() * 5)];
-    const target = ["Global Defense Contractors", "Sovereign Bond Clearing Houses", "Subsea Fiber Grid", "CBDC Central Vaults", "Autonomous Drone Fleets", "Rare-Earth Concessions"][Math.floor(Math.random() * 6)];
-    const tag = ["Narrative", "Resource Grid", "Covert Intel", "Force Projection", "Debt Monopoly"][Math.floor(Math.random() * 5)];
-
-    const scale = Math.max(1, state.completedDirectives + 1);
-    const cost = Math.round((25000000 * Math.pow(1.3, scale)) * (0.8 + Math.random() * 0.4));
-    const cashflow = Math.round(cost * 0.045);
-    const influence = Math.min(20, Math.floor(Math.random() * 4 + 3));
-
-    return {
-      id: "DIR_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-      title: `${verb} ${target}`,
-      tag: tag,
-      desc: `Expand corporate sovereignty. Subjugate infrastructure under your private holding umbrella.`,
-      cost: cost,
-      cashflow: cashflow,
-      influence: influence,
-      sentiment: Math.floor(Math.random() * 10 - 4),
-      shadow: Math.floor(Math.random() * 8 + 3),
-      completed: false
-    };
-  }
-
-  function generateDirectiveBatch(manual = false) {
-    while (state.directives.filter(d => !d.completed).length < 4) {
-      state.directives.push(createDirective());
-    }
-    if (manual) {
-      triggerAudio(1000);
-      logEvent("Strategic intelligence scan updated with new priority operations.", "normal");
-    }
-    renderDirectives();
-  }
-
-  // --- STOCKS ACTIONS ---
   window.buyStock = function(id, count) {
     const s = state.stocks.find(item => item.id === id);
     const cost = s.price * count;
@@ -964,7 +1040,7 @@
     triggerAudio(800);
     state.capital -= cost;
     s.shares = (s.shares || 0) + count;
-    logEvent(`Acquired ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "normal");
+    logEvent(`Bought ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "normal");
     updateUI();
   };
 
@@ -975,59 +1051,7 @@
     const revenue = s.price * count;
     state.capital += revenue;
     s.shares -= count;
-    logEvent(`Liquidated ${count.toLocaleString()} shares of ${s.id} for +${formatMoney(revenue)}.`, "success");
-    updateUI();
-  };
-
-  window.shortStock = function(id, count) {
-    const s = state.stocks.find(item => item.id === id);
-    const collateral = s.price * count;
-    if (state.capital < collateral || s.insolvent) return;
-    triggerAudio(700);
-    state.capital -= collateral;
-    s.shortShares = (s.shortShares || 0) + count;
-    s.shortPrice = s.price;
-    logEvent(`Opened short position on ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "warn");
-    updateUI();
-  };
-
-  window.closeShort = function(id, count) {
-    const s = state.stocks.find(item => item.id === id);
-    if ((s.shortShares || 0) < count) return;
-    triggerAudio(1100);
-    const returnVal = (s.shortPrice * 2 - s.price) * count;
-    state.capital += Math.max(0, returnVal);
-    s.shortShares -= count;
-    logEvent(`Covered short on ${s.id}. Settled: +${formatMoney(returnVal)}.`, "success");
-    updateUI();
-  };
-
-  window.shortAttack = function(id) {
-    const s = state.stocks.find(item => item.id === id);
-    const cost = Math.max(5000000, s.price * 40000);
-    if (state.capital < cost) return;
-    triggerAudio(400);
-    state.capital -= cost;
-    state.shadow += Math.max(1, 3 - getLegacyLevel("shadow_shield"));
-    state.sentiment -= 2;
-    const oldP = s.price;
-    s.price = Math.max(1, Math.round(s.price * 0.45));
-    s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
-    logEvent(`SMEAR ATTACK: Bots dumped ${s.id} from $${oldP} to $${s.price}!`, "crit");
-    updateUI();
-  };
-
-  window.pumpStock = function(id) {
-    const s = state.stocks.find(item => item.id === id);
-    const cost = Math.max(4000000, s.price * 30000);
-    if (state.capital < cost || s.insolvent) return;
-    triggerAudio(1200);
-    state.capital -= cost;
-    state.influence += 1;
-    const oldP = s.price;
-    s.price = Math.round(s.price * 1.65);
-    s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
-    logEvent(`MEDIA PUMP: Broadcast campaign pumped ${s.id} to $${s.price}.`, "success");
+    logEvent(`Sold ${count.toLocaleString()} shares of ${s.id} for +${formatMoney(revenue)}.`, "success");
     updateUI();
   };
 
@@ -1037,166 +1061,12 @@
     triggerAudio(1300);
     state.capital -= s.buyoutCost;
     state.baseCashflow += s.revenue;
-    state.influence += 5;
+    state.influence += 4;
     s.controlled = true;
-    logEvent(`TAKEOVER COMPLETE: Absorbed 100% of ${s.name}. Added +${formatMoney(s.revenue)}/s cashflow.`, "success");
+    logEvent(`TAKEOVER: Absorbed 100% of ${s.name}. Added +${formatMoney(s.revenue)}/s cashflow.`, "success");
     updateUI();
   };
 
-  window.illegalBailout = function(id) {
-    const s = state.stocks.find(item => item.id === id);
-    const bailoutCost = Math.max(5000000, Math.round(s.totalShares * 3.5));
-    if (state.capital < bailoutCost) return;
-
-    triggerAudio(1400);
-    state.capital -= bailoutCost;
-    state.shadow += Math.max(2, 10 - (getLegacyLevel("shadow_shield") * 2));
-    state.sentiment -= 4;
-    
-    s.price = Math.floor(Math.random() * 70 + 40);
-    s.controlled = true;
-    s.insolvent = false;
-    state.baseCashflow += s.revenue;
-    state.influence += 6;
-
-    logEvent(`ILLEGAL OFFSHORE BAILOUT: Injected black-budget liquidity into ${s.name}. 100% equity seized @ $${s.price}!`, "crit");
-    updateUI();
-  };
-
-  // --- NATIONS ACTIONS ---
-  window.buySovereignBonds = function(id) {
-    const nat = state.nations.find(n => n.id === id);
-    if (!nat || state.capital < nat.bondBlockCost || nat.privatized) return;
-
-    triggerAudio(1200);
-    state.capital -= nat.bondBlockCost;
-    nat.bondsHeld += 20;
-
-    if (nat.bondsHeld >= 100) {
-      nat.privatized = true;
-      state.baseCashflow += nat.taxRevenue;
-      state.influence += nat.influenceReward;
-      logEvent(`SOVEREIGN ANNEXATION: ${nat.fullName} privatized! Gained +${formatMoney(nat.taxRevenue)}/s tax cashflow & +${nat.influenceReward}% Hegemony!`, "success");
-    } else {
-      logEvent(`Acquired 20% bond tranche of ${nat.fullName} (${nat.bondsHeld}% controlled).`, "normal");
-    }
-    updateUI();
-  };
-
-  // --- RIVALS ACTIONS ---
-  window.attackRival = function(id) {
-    const riv = state.rivals.find(r => r.id === id);
-    const cost = Math.round(riv.netWorth * 0.15);
-    if (state.capital < cost || riv.defeated) return;
-
-    triggerAudio(400);
-    state.capital -= cost;
-    riv.netWorth = Math.round(riv.netWorth * 0.6);
-    state.shadow += 4;
-    logEvent(`CORPORATE RAID: Smeared ${riv.name} with investigative probes. Net worth dropped to ${formatMoney(riv.netWorth)}.`, "warn");
-    updateUI();
-  };
-
-  window.buyoutRival = function(id) {
-    const riv = state.rivals.find(r => r.id === id);
-    const buyoutPrice = Math.round(riv.netWorth * 1.2);
-    if (state.capital < buyoutPrice || riv.defeated) return;
-
-    triggerAudio(1400);
-    state.capital -= buyoutPrice;
-    state.baseCashflow += riv.revenue;
-    state.influence += riv.influence;
-    riv.defeated = true;
-    logEvent(`MEGA-MERGER: Completely absorbed ${riv.name}! Gained +${formatMoney(riv.revenue)}/s cashflow.`, "success");
-    updateUI();
-  };
-
-  // --- DIRECTIVES ACTIONS ---
-  window.buyDirective = function(id) {
-    const d = state.directives.find(item => item.id === id);
-    if (!d || state.capital < d.cost || d.completed) return;
-
-    triggerAudio(1100);
-    state.capital -= d.cost;
-    state.baseCashflow += d.cashflow;
-    state.tapValue += Math.round(d.cashflow * 0.1);
-    state.influence += d.influence;
-    state.sentiment += d.sentiment;
-    state.shadow += Math.max(1, d.shadow - getLegacyLevel("shadow_shield"));
-    d.completed = true;
-    state.completedDirectives++;
-
-    logEvent(`OPERATION AUTHORIZED: ${d.title}. Added +${formatMoney(d.cashflow)}/s cashflow.`, "success");
-    generateDirectiveBatch();
-    updateUI();
-    saveGame();
-  };
-
-  // --- THE GREAT RESET ---
-  function calculateResetTokens() {
-    if (state.netWorth < 100000000000) return 0;
-    return Math.floor(Math.sqrt(state.netWorth / 100000000000));
-  }
-
-  window.triggerGreatReset = function() {
-    const tokensEarned = calculateResetTokens();
-    if (tokensEarned <= 0) {
-      alert("You need at least $100 Billion in Total Net Worth to initiate The Great Reset!");
-      return;
-    }
-
-    if (!confirm(`Trigger The Great Reset? Wipe assets and earn +${tokensEarned} Shadow Tokens (Ω)?`)) return;
-
-    state.shadowTokens += tokensEarned;
-    state.prestigeCount++;
-
-    const startInf = getLegacyLevel("starting_influence") * 10;
-    const startCap = 50000000 + (getLegacyLevel("starting_influence") * 50000000);
-
-    state.capital = startCap;
-    state.netWorth = startCap;
-    state.baseCashflow = 1200000;
-    state.tapValue = 250000;
-    state.influence = 1 + startInf;
-    state.sentiment = 65;
-    state.shadow = 5;
-    state.year = 2004;
-    state.quarter = 1;
-    state.ai.elo = 1200;
-    state.ai.compute = 10;
-    state.ai.tokens = 2.5;
-    state.ai.rlhfLevel = 1;
-    state.directives = [];
-    state.completedDirectives = 0;
-    state.stocks = [];
-    state.nations = [];
-    state.contracts = [];
-    state.rivals = JSON.parse(JSON.stringify(defaultRivals));
-
-    for (let i = 0; i < 4; i++) state.stocks.push(createStock());
-    for (let i = 0; i < 2; i++) state.nations.push(createNation());
-    for (let i = 0; i < 2; i++) state.contracts.push(createContract());
-    generateDirectiveBatch();
-
-    logEvent(`THE GREAT RESET COMPLETE: Reinitialized with +${tokensEarned} Shadow Tokens (Ω).`, "success");
-    updateUI();
-    saveGame();
-  };
-
-  window.buyLegacyUpgrade = function(id) {
-    const up = state.legacyUpgrades.find(u => u.id === id);
-    if (!up || state.shadowTokens < up.cost) return;
-
-    triggerAudio(1300);
-    state.shadowTokens -= up.cost;
-    up.level++;
-    up.cost = Math.round(up.cost * 1.8);
-    logEvent(`BLACK MARKET UPGRADE: ${up.name} upgraded to Level ${up.level}.`, "success");
-    updateUI();
-    saveGame();
-  };
-
-  // --- RENDER VIEWS ---
   function renderMarket() {
     const container = document.getElementById('market-list');
     container.innerHTML = '';
@@ -1208,7 +1078,6 @@
       const trendSymbol = stock.trend >= 0 ? '▲' : '▼';
       const batchSize = 1000;
       const batchCost = stock.price * batchSize;
-      const bailoutCost = Math.max(5000000, Math.round(stock.totalShares * 3.5));
 
       card.innerHTML = `
         <div class="card-header">
@@ -1216,35 +1085,23 @@
             <div class="card-title">${stock.id} <span style="font-size:11px; font-weight:normal; color:#94a3b8;">(${stock.name})</span></div>
             <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${stock.sector}</div>
             ${stock.controlled ? '<span class="card-badge" style="background:#2e1065; color:#d8b4fe;">100% SUBSIDIARY</span>' : ''}
-            ${stock.insolvent ? '<span class="card-badge" style="background:#7f1d1d; color:#fca5a5;">INSOLVENT / DISTRESSED</span>' : ''}
           </div>
           <div style="font-family:var(--font-mono); font-weight:bold; font-size:15px; color:${trendColor}">${trendSymbol} $${stock.price}</div>
         </div>
 
         <div class="card-metrics" style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:4px 6px; border-radius:4px;">
-          <span>SHARES: ${(stock.shares || 0).toLocaleString()}</span>
-          <span>SHORT: ${(stock.shortShares || 0).toLocaleString()}</span>
-          <span>TAKEOVER: ${formatMoney(stock.buyoutCost)}</span>
+          <span>SHARES HELD: ${(stock.shares || 0).toLocaleString()}</span>
+          <span>BUYOUT: ${formatMoney(stock.buyoutCost)}</span>
         </div>
 
         ${!stock.controlled ? `
-          ${!stock.insolvent ? `
-          <div class="stock-grid-2">
+          <div class="grid-2">
             <button class="btn-sm btn-buy" onclick="buyStock('${stock.id}', 1000)">BUY 1K (${formatMoney(batchCost)})</button>
             <button class="btn-sm btn-sell" onclick="sellStock('${stock.id}', 1000)" ${stock.shares < 1000 ? 'disabled' : ''}>SELL 1K</button>
-            <button class="btn-sm btn-short" onclick="shortStock('${stock.id}', 1000)">SHORT 1K (${formatMoney(batchCost)})</button>
-            <button class="btn-sm btn-raid" onclick="closeShort('${stock.id}', 1000)" ${stock.shortShares < 1000 ? 'disabled' : ''}>COVER SHORT</button>
-            <button class="btn-sm btn-short" onclick="shortAttack('${stock.id}')">📉 SMEAR (-55%)</button>
-            <button class="btn-sm btn-buy" onclick="pumpStock('${stock.id}')">📈 PUMP (+65%)</button>
             <button class="btn-sm btn-takeover" onclick="hostileTakeover('${stock.id}')" ${state.capital < stock.buyoutCost ? 'disabled' : ''}>
               ⚡ HOSTILE TAKEOVER (${formatMoney(stock.buyoutCost)})
             </button>
           </div>
-          ` : `
-          <button class="btn-sm btn-bailout" onclick="illegalBailout('${stock.id}')" ${state.capital < bailoutCost ? 'disabled' : ''}>
-            🚨 ILLEGAL OFFSHORE BAILOUT (${formatMoney(bailoutCost)})
-          </button>
-          `}
         ` : `
         <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-green); text-align:center; padding:4px; background:rgba(0,255,102,0.05); border-radius:4px;">
           ✓ Consolidated. Generating +${formatMoney(stock.revenue)}/s cashflow.
@@ -1255,118 +1112,110 @@
     });
   }
 
-  function renderNations() {
-    const container = document.getElementById('nations-list');
-    container.innerHTML = '';
+  // --- VENTURE STARTUPS ---
+  function spawnNewStartup(manual = false) {
+    if (state.startups.length >= 4) return;
+    const s = {
+      id: "ST_" + Date.now(),
+      title: "Quantum Bio-Chips (Seed)",
+      cost: Math.floor(Math.random() * 40000 + 15000)
+    };
+    state.startups.push(s);
+    if (manual) logEvent("Scouted new startup pitch deck.", "normal");
+    renderStartups();
+  }
 
-    state.nations.forEach(nat => {
+  function renderStartups() {
+    const container = document.getElementById('startups-list');
+    container.innerHTML = '';
+    state.startups.forEach(s => {
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <div class="card-header">
-          <div>
-            <div class="card-title">${nat.fullName}</div>
-            <div style="font-size:9.5px; color:var(--accent-purple); font-family:var(--font-mono);">SOVEREIGN TREASURY</div>
-          </div>
-          ${nat.privatized ? '<span class="card-badge" style="background:#3b0764; color:#d8b4fe;">PRIVATIZED STATE</span>' : `<span class="card-badge">${nat.bondsHeld}% DEBT HELD</span>`}
+          <div class="card-title">${s.title}</div>
+          <span class="card-badge">${formatMoney(s.cost)} SEED CHECK</span>
         </div>
-        <div class="card-desc">Total Sovereign Debt: ${formatMoney(nat.totalDebt)}. Tax extraction yield: +${formatMoney(nat.taxRevenue)}/s.</div>
-        ${!nat.privatized ? `
-        <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple);" ${state.capital < nat.bondBlockCost ? 'disabled' : ''} onclick="buySovereignBonds('${nat.id}')">
-          BUY 20% DEBT TRANCHE (${formatMoney(nat.bondBlockCost)})
+        <button class="btn-sm btn-pink" ${state.capital < s.cost ? 'disabled' : ''} onclick="fundStartup('${s.id}')">
+          🚀 FUND SEED (${formatMoney(s.cost)})
         </button>
-        ` : `
-        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-purple); text-align:center; padding:4px; background:rgba(192,132,252,0.05); border-radius:4px;">
-          ✓ Sovereign territory privatized. Yielding +${formatMoney(nat.taxRevenue)}/s permanent revenue.
-        </div>
-        `}
       `;
       container.appendChild(card);
     });
   }
 
+  window.fundStartup = function(id) {
+    const s = state.startups.find(item => item.id === id);
+    if (!s || state.capital < s.cost) return;
+    state.capital -= s.cost;
+    state.startups = state.startups.filter(item => item.id !== id);
+
+    setTimeout(() => {
+      if (Math.random() < 0.3) {
+        const payout = s.cost * 8;
+        state.capital += payout;
+        logEvent(`UNICORN EXIT: Startup returned +${formatMoney(payout)}!`, "success");
+      } else {
+        logEvent(`STARTUP FAILURE: Seed investment burned to $0.`, "crit");
+      }
+      updateUI();
+    }, 3000);
+
+    updateUI();
+  };
+
+  // --- RIVALS ---
   function renderRivals() {
     const container = document.getElementById('rivals-list');
     container.innerHTML = '';
-
     state.rivals.forEach(riv => {
       const card = document.createElement('div');
       card.className = 'card';
-      const attackCost = Math.round(riv.netWorth * 0.15);
-      const buyoutPrice = Math.round(riv.netWorth * 1.2);
-
       card.innerHTML = `
         <div class="card-header">
           <div>
             <div class="card-title">${riv.name}</div>
-            <div style="font-size:9.5px; color:var(--accent-purple); font-family:var(--font-mono);">AI MODEL: ${riv.aiModel} (${riv.aiElo} ELO)</div>
+            <div style="font-size:9.5px; color:var(--accent-purple); font-family:var(--font-mono);">VALUATION: ${formatMoney(riv.netWorth)}</div>
           </div>
-          ${riv.defeated ? '<span class="card-badge" style="background:#064e3b; color:#6ee7b7;">ASSIMILATED</span>' : `<span class="card-badge" style="color:var(--accent-red);">${formatMoney(riv.netWorth)}</span>`}
         </div>
-        <div class="card-desc">Competes for global infrastructure contracts, AI compute, and sovereign assets.</div>
-        ${!riv.defeated ? `
-        <div class="stock-grid-2">
-          <button class="btn-sm btn-short" ${state.capital < attackCost ? 'disabled' : ''} onclick="attackRival('${riv.id}')">
-            📉 CORPORATE RAID (${formatMoney(attackCost)})
-          </button>
-          <button class="btn-sm btn-takeover" ${state.capital < buyoutPrice ? 'disabled' : ''} onclick="buyoutRival('${riv.id}')">
-            ⚡ BUYOUT (${formatMoney(buyoutPrice)})
-          </button>
-        </div>
-        ` : `
-        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-green); text-align:center; padding:4px; background:rgba(0,255,102,0.05); border-radius:4px;">
-          ✓ Rival empire absorbed. Added +${formatMoney(riv.revenue)}/s cashflow.
-        </div>
-        `}
       `;
       container.appendChild(card);
     });
   }
 
-  function renderLegacyUpgrades() {
-    const container = document.getElementById('legacy-upgrades-list');
+  function renderMegaprojects() {
+    const container = document.getElementById('megaprojects-list');
     container.innerHTML = '';
-
-    state.legacyUpgrades.forEach(up => {
+    state.megaprojects.forEach(p => {
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <div class="card-header">
-          <div class="card-title">${up.name}</div>
-          <span class="card-badge" style="color:var(--accent-purple);">LVL ${up.level}</span>
+          <div class="card-title">${p.title}</div>
+          <span class="card-badge" style="color:var(--accent-gold);">${formatMoney(p.cost)}</span>
         </div>
-        <div class="card-desc">${up.desc}</div>
-        <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple);" ${state.shadowTokens < up.cost ? 'disabled' : ''} onclick="buyLegacyUpgrade('${up.id}')">
-          UPGRADE (${up.cost} $\\Omega$)
+        <div class="card-desc">${p.desc}</div>
+        ${!p.owned ? `
+        <button class="btn-sm btn-gold" ${state.capital < p.cost ? 'disabled' : ''} onclick="buyMegaproject('${p.id}')">
+          COMMISSION (${formatMoney(p.cost)})
         </button>
+        ` : `<div style="color:var(--accent-gold); font-size:10px;">✓ Fully Operational</div>`}
       `;
       container.appendChild(card);
     });
   }
 
-  function renderDirectives() {
-    const container = document.getElementById('directives-list');
-    container.innerHTML = '';
-    const activeList = state.directives.filter(d => !d.completed);
+  window.buyMegaproject = function(id) {
+    const p = state.megaprojects.find(m => m.id === id);
+    if (!p || state.capital < p.cost || p.owned) return;
+    state.capital -= p.cost;
+    state.baseCashflow += p.revenue;
+    p.owned = true;
+    logEvent(`COMMISSIONED MEGAPROJECT: ${p.title}!`, "gold");
+    updateUI();
+  };
 
-    activeList.forEach(d => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div class="card-title">${d.title}</div>
-          <div class="card-badge">${d.tag}</div>
-        </div>
-        <div class="card-desc">${d.desc}</div>
-        <div class="card-metrics">COST: ${formatMoney(d.cost)} // REV: +${formatMoney(d.cashflow)}/s // INF: +${d.influence}%</div>
-        <button id="btn-${d.id}" class="action-btn" ${state.capital < d.cost ? 'disabled' : ''} onclick="buyDirective('${d.id}')">
-          AUTHORIZE (${formatMoney(d.cost)})
-        </button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
+  // --- MASTER UI UPDATE ---
   function updateUI() {
     let stockEquity = 0;
     state.stocks.forEach(s => {
@@ -1374,217 +1223,74 @@
       if (s.controlled) stockEquity += s.buyoutCost;
     });
 
-    const dividendBonus = 1 + (getLegacyLevel("dividend_tap") * 0.3);
-    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue) * dividendBonus;
+    const macro = macroRegimes[state.macroIndex];
+    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue) * macro.mult;
 
-    state.netWorth = state.capital + stockEquity + (state.completedDirectives * 50000000);
+    state.netWorth = state.capital + stockEquity + (state.signedTalent.length * 50000);
 
     document.getElementById('ui-capital').innerText = formatMoney(state.capital);
     document.getElementById('ui-cashflow').innerText = `+${formatMoney(totalCashflow)}/s`;
     document.getElementById('ui-networth').innerText = formatMoney(state.netWorth);
-    document.getElementById('ui-influence').innerText = `${Math.min(100, state.influence)}%`;
-    document.getElementById('bar-influence').style.width = `${Math.min(100, state.influence)}%`;
-    document.getElementById('ui-trust-shadow').innerText = `${Math.max(0, state.sentiment)}% / ${state.shadow}%`;
-    document.getElementById('bar-trust').style.width = `${Math.max(0, state.sentiment)}%`;
-    
-    const siphonBoost = 1 + (getLegacyLevel("siphon_mult") * 1.5);
-    document.getElementById('tap-reward').innerText = `+${formatMoney(state.tapValue * siphonBoost)}`;
-
+    document.getElementById('ui-talent-count').innerText = `${state.signedTalent.length} Signed`;
+    document.getElementById('empire-talent-count').innerText = state.signedTalent.length;
+    document.getElementById('empire-macro-regime').innerText = `${macro.icon} ${macro.name}`;
     document.getElementById('empire-date').innerText = `${state.year}.Q${state.quarter}`;
     document.getElementById('empire-stock-equity').innerText = formatMoney(stockEquity);
-    document.getElementById('empire-nations-count').innerText = state.nations.filter(n => n.privatized).length;
-    document.getElementById('empire-contracts-count').innerText = state.contracts.filter(c => c.held).length;
-    document.getElementById('empire-rivals-defeated').innerText = `${state.rivals.filter(r => r.defeated).length} / ${state.rivals.length}`;
     document.getElementById('empire-rate').innerText = `+${formatMoney(totalCashflow)} / sec`;
 
-    document.getElementById('prestige-tokens-avail').innerText = `${state.shadowTokens} $\\Omega$ (Earn +${calculateResetTokens()} on Reset)`;
-
     const stageEl = document.getElementById('ui-stage');
-    if (state.influence >= 100 && state.netWorth >= 1e12) stageEl.innerText = "Stage IV: Hegemon";
-    else if (state.netWorth >= 100e9) stageEl.innerText = "Stage III: Sovereign";
-    else if (state.netWorth >= 10e9) stageEl.innerText = "Stage II: Titan";
-    else stageEl.innerText = "Stage I: Mogul";
+    if (state.netWorth >= 1e12) stageEl.innerText = "Global Hegemon";
+    else if (state.netWorth >= 10e9) stageEl.innerText = "Tech Giant (MSFT/GOOG)";
+    else if (state.netWorth >= 500e6) stageEl.innerText = "Media & Tech Titan";
+    else if (state.netWorth >= 50e6) stageEl.innerText = "Venture Conglomerate";
+    else if (state.netWorth >= 1e6) stageEl.innerText = "Seed Capitalist";
+    else stageEl.innerText = "Garage Era";
 
-    renderDirectives();
+    renderTalentViews();
     renderAILeaderboard();
-    renderContracts();
     renderMarket();
-    renderNations();
+    renderStartups();
     renderRivals();
-    renderLegacyUpgrades();
-    checkEndGame();
+    renderMegaprojects();
   }
 
-  // --- CLOCK & SIMULATION LOOP (1 SECOND) ---
+  // --- ENGINE LOOP (1 SEC) ---
   setInterval(() => {
-    const dividendBonus = 1 + (getLegacyLevel("dividend_tap") * 0.3);
-    state.capital += (state.baseCashflow + state.ai.apiRevenue) * dividendBonus;
-    
+    const macro = macroRegimes[state.macroIndex];
+    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue) * macro.mult;
+    state.capital += totalCashflow;
+
     state.quarter++;
     if (state.quarter > 4) {
       state.quarter = 1;
       state.year++;
-      runQuarterlyEvent();
+      if (Math.random() < 0.3) {
+        state.macroIndex = Math.floor(Math.random() * macroRegimes.length);
+        logEvent(macroRegimes[state.macroIndex].log, "warn");
+      }
     }
 
-    // Organic Rival AI Training Ticks
-    if (Math.random() < 0.22) runRivalsAITick();
+    // Auto-refresh talent pipeline & stocks
+    if (state.scoutedTalent.length < 4 && Math.random() < 0.4) spawnNewTalent(false);
+    if (state.stocks.length < 6 && Math.random() < 0.3) spawnNewStock(false);
 
-    // Occasional Rival Market Activity (Balanced)
-    if (Math.random() < 0.10) runRivalMarketAction();
-
-    // Stock Fluctuation
+    // Stock price fluctuations
     state.stocks.forEach(s => {
       if (s.controlled) return;
-      const delta = (Math.random() * 0.16) - 0.08;
-      const old = s.price;
-      s.price = Math.max(1, Math.round(s.price * (1 + delta)));
-      s.trend = s.price >= old ? 1 : -1;
+      const delta = (Math.random() * 0.14) - 0.07;
+      s.price = Math.max(2, Math.round(s.price * (1 + delta)));
       s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
+    });
 
-      if (s.price <= 5 && !s.insolvent) {
-        s.insolvent = true;
-        logEvent(`INSOLVENCY ALERT: ${s.name} (${s.id}) crashed into bankruptcy ($${s.price})!`, "crit");
-      } else if (s.price > 10 && s.insolvent) {
-        s.insolvent = false;
-      }
+    // Rivals organically grow and invest
+    state.rivals.forEach(r => {
+      r.netWorth = Math.round(r.netWorth * (1 + (Math.random() * 0.04 - 0.01)));
+      r.aiElo += Math.floor(Math.random() * 4);
     });
 
     updateUI();
     saveGame();
   }, 1000);
-
-  function runRivalsAITick() {
-    const activeRivals = state.rivals.filter(r => !r.defeated);
-    if (activeRivals.length === 0) return;
-    const r = activeRivals[Math.floor(Math.random() * activeRivals.length)];
-
-    // Rival legitimately invests in compute and runs a training run
-    const eloGain = Math.floor(Math.random() * 6 + 3);
-    r.aiElo += eloGain;
-    r.netWorth = Math.round(r.netWorth * 1.03);
-
-    if (Math.random() < 0.3) {
-      logEvent(`[AI RACE] ${r.name} expanded datacenter capacity and scaled ${r.aiModel} to ${r.aiElo} ELO.`, "ai");
-    }
-  }
-
-  function runRivalMarketAction() {
-    const active = state.rivals.filter(r => !r.defeated);
-    if (active.length < 2) return;
-
-    const rA = active[Math.floor(Math.random() * active.length)];
-    let rB = active[Math.floor(Math.random() * active.length)];
-    while (rB === rA) rB = active[Math.floor(Math.random() * active.length)];
-
-    const events = [
-      () => {
-        rB.netWorth = Math.round(rB.netWorth * 0.88);
-        rA.netWorth = Math.round(rA.netWorth * 1.08);
-        logEvent(`[MARKET RAID] ${rA.name} outmaneuvered ${rB.name} in high-frequency bond trading.`, "normal");
-      },
-      () => {
-        rA.influence += 2;
-        logEvent(`[LOBBYING] ${rA.name} secured exclusive energy subcontracts over ${rB.name}.`, "normal");
-      }
-    ];
-
-    events[Math.floor(Math.random() * events.length)]();
-  }
-
-  function runQuarterlyEvent() {
-    if (state.stocks.length < 8 && Math.random() < 0.4) spawnNewStock(false);
-    if (state.nations.length < 5 && Math.random() < 0.3) spawnNewNation(false);
-    if (state.contracts.length < 4 && Math.random() < 0.4) spawnNewContract(false);
-
-    if (state.shadow >= 40 && Math.random() < 0.35) {
-      triggerCrisisEvent();
-    }
-  }
-
-  function triggerCrisisEvent() {
-    const crises = [
-      {
-        title: "🚨 Federal Anti-Money Laundering Raid",
-        desc: "Federal prosecutors flag offshore accounts funding your private corporate bailouts.",
-        optA: "Bribe Deputy Director (-$25M Cash, +5 Trust)",
-        optB: "Deploy Cerberus Cyber Blackout (+15 Shadow)",
-        actA: () => { state.capital = Math.max(0, state.capital - 25000000); state.sentiment += 5; },
-        actB: () => { state.shadow += 15; }
-      },
-      {
-        title: "📰 Whistleblower Investigative Leak",
-        desc: "An insider leaked server telemetry revealing dark-pool algorithm siphoning.",
-        optA: "Launch Apex Media Smear Campaign (-$15M, -5 Shadow)",
-        optB: "Send Vanguard PMC to Seize Hard Drives (+12 Shadow)",
-        actA: () => { state.capital = Math.max(0, state.capital - 15000000); state.shadow = Math.max(0, state.shadow - 5); },
-        actB: () => { state.shadow += 12; }
-      }
-    ];
-
-    const c = crises[Math.floor(Math.random() * crises.length)];
-    showCrisisModal(c);
-  }
-
-  function showCrisisModal(c) {
-    const modal = document.getElementById('modal-container');
-    modal.innerHTML = `
-      <div class="modal-overlay">
-        <div class="modal-box" style="border-color:var(--accent-red);">
-          <h2 style="color:var(--accent-red); font-family:var(--font-mono); font-size:15px; margin-bottom:8px;">${c.title}</h2>
-          <p style="color:#94a3b8; font-size:11.5px; line-height:1.4; margin-bottom:14px;">${c.desc}</p>
-          <button class="btn-sm btn-buy" style="width:100%; margin-bottom:6px;" onclick="resolveCrisis('A')">${c.optA}</button>
-          <button class="btn-sm btn-short" style="width:100%;" onclick="resolveCrisis('B')">${c.optB}</button>
-        </div>
-      </div>
-    `;
-    window.currentCrisis = c;
-  }
-
-  window.resolveCrisis = function(choice) {
-    if (window.currentCrisis) {
-      if (choice === 'A') window.currentCrisis.actA();
-      else window.currentCrisis.actB();
-      window.currentCrisis = null;
-    }
-    document.getElementById('modal-container').innerHTML = '';
-    updateUI();
-  };
-
-  function checkEndGame() {
-    if (state.influence >= 100 && state.netWorth >= 1e12 && !state.won) {
-      state.won = true;
-      showVictoryModal();
-    } else if (state.sentiment <= 0 && state.shadow >= 90) {
-      showDefeatModal();
-    }
-  }
-
-  function showVictoryModal() {
-    const c = document.getElementById('modal-container');
-    c.innerHTML = `
-      <div class="modal-overlay">
-        <div class="modal-box">
-          <h2 style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:16px; margin-bottom:8px;">VICTORY: TOTAL PLANETARY HEGEMONY</h2>
-          <p style="color:#94a3b8; font-size:12px; line-height:1.4; margin-bottom:14px;">Your Frontier AI Core and private clearing engines dictate the global order.</p>
-          <button class="action-btn" onclick="triggerGreatReset()">INITIATE THE GREAT RESET (NEW GAME+)</button>
-        </div>
-      </div>
-    `;
-  }
-
-  function showDefeatModal() {
-    const c = document.getElementById('modal-container');
-    c.innerHTML = `
-      <div class="modal-overlay">
-        <div class="modal-box" style="border-color:var(--accent-red);">
-          <h2 style="color:var(--accent-red); font-family:var(--font-mono); font-size:16px; margin-bottom:8px;">DEFEAT: STATE SEIZURE</h2>
-          <p style="color:#94a3b8; font-size:12px; line-height:1.4; margin-bottom:14px;">Your shadow footprint triggered global antitrust military raids. Holding accounts frozen.</p>
-          <button class="action-btn" onclick="resetSave()">REINITIALIZE PROTOCOL</button>
-        </div>
-      </div>
-    `;
-  }
 
   function saveGame() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -1599,28 +1305,20 @@
   }
 
   function confirmReset() {
-    if (confirm("Wipe all simulation data and reset to Turn 1?")) {
-      resetSave();
+    if (confirm("Reset simulation to Garage Era Turn 1?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
     }
   }
 
-  function resetSave() {
-    localStorage.removeItem(STORAGE_KEY);
-    location.reload();
-  }
-
-  // INITIALIZATION
+  // STARTUP INITIALIZATION
   if (!state.stocks || state.stocks.length === 0) {
     for (let i = 0; i < 4; i++) state.stocks.push(createStock());
   }
-  if (!state.nations || state.nations.length === 0) {
-    for (let i = 0; i < 2; i++) state.nations.push(createNation());
+  if (!state.scoutedTalent || state.scoutedTalent.length === 0) {
+    for (let i = 0; i < 3; i++) state.scoutedTalent.push(createRandomTalent());
   }
-  if (!state.contracts || state.contracts.length === 0) {
-    for (let i = 0; i < 2; i++) state.contracts.push(createContract());
-  }
-  generateDirectiveBatch();
-  logEvent("Frontier AI Core & Global Capital Systems Online.", "normal");
+  logEvent("Global Capital Core Online. Media Studios & Compound Growth Active.", "normal");
   document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
   updateUI();
 </script>
