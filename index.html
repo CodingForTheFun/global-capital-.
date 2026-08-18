@@ -1,279 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#07090e">
-<title>GLOBAL CAPITAL</title>
-<style>
-  :root {
-    --bg-main: #07090e;
-    --bg-panel: #0f141f;
-    --bg-card: #151c2b;
-    --accent-green: #00ff66;
-    --accent-amber: #ffaa00;
-    --accent-red: #ff3344;
-    --accent-cyan: #00e5ff;
-    --text-main: #f8fafc;
-    --text-muted: #64748b;
-    --border: #1e293b;
-    --font-mono: -apple-system-ui-monospaced, 'SF Mono', 'Roboto Mono', monospace;
-    --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#07090e">
+  <title>GLOBAL CAPITAL // SYSTEM ARCHITECT</title>
+  <style>
+    :root {
+      --bg-main: #07090e;
+      --bg-panel: #0f141f;
+      --bg-card: #151c2b;
+      --accent-green: #00ff66;
+      --accent-amber: #ffaa00;
+      --accent-red: #ff3344;
+      --accent-cyan: #00e5ff;
+      --text-main: #f8fafc;
+      --text-muted: #64748b;
+      --border: #1e293b;
+      --font-mono: -apple-system-ui-monospaced, 'SF Mono', 'Roboto Mono', monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', Roboto, sans-serif;
+    }
 
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    -webkit-user-select: none;
-  }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-  body {
-    background: var(--bg-main);
-    color: var(--text-main);
-    font-family: var(--font-sans);
-    height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    padding-top: max(env(safe-area-inset-top), 10px);
-    padding-bottom: max(env(safe-area-inset-bottom), 12px);
-    padding-left: 12px;
-    padding-right: 12px;
-    overflow: hidden;
-  }
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      padding: max(env(safe-area-inset-top), 8px) 12px max(env(safe-area-inset-bottom), 10px) 12px;
+      overflow: hidden;
+      max-width: 850px;
+      margin: 0 auto;
+    }
 
-  /* TOP STICKY FINANCIAL HUD */
-  .hud {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 10px 14px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-    flex-shrink: 0;
-  }
+    /* TICKER */
+    .ticker-bar {
+      background: #000;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+    }
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 30s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
 
-  .hud-block { display: flex; flex-direction: column; }
-  .hud-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-family: var(--font-mono); }
-  .hud-val { font-size: 16px; font-weight: 800; font-family: var(--font-mono); margin-top: 1px; }
-  
-  .val-green { color: var(--accent-green); }
-  .val-cyan { color: var(--accent-cyan); }
-  .val-amber { color: var(--accent-amber); }
+    /* FINANCIAL HUD */
+    .hud {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+      flex-shrink: 0;
+    }
 
-  .bar-container {
-    width: 100%;
-    height: 4px;
-    background: #1e293b;
-    border-radius: 2px;
-    margin-top: 3px;
-    overflow: hidden;
-  }
-  .bar-fill { height: 100%; transition: width 0.3s ease; }
+    .hud-block { display: flex; flex-direction: column; }
+    .hud-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-family: var(--font-mono); }
+    .hud-val { font-size: 16px; font-weight: 800; font-family: var(--font-mono); margin-top: 1px; }
+    .val-green { color: var(--accent-green); }
+    .val-cyan { color: var(--accent-cyan); }
+    .val-amber { color: var(--accent-amber); }
+    .val-red { color: var(--accent-red); }
 
-  /* QUICK TAP LIQUIDITY GENERATOR */
-  .tap-action-bar {
-    margin: 8px 0;
-    flex-shrink: 0;
-  }
+    .bar-container {
+      width: 100%;
+      height: 4px;
+      background: #1e293b;
+      border-radius: 2px;
+      margin-top: 3px;
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; transition: width 0.3s ease; }
 
-  .tap-btn {
-    width: 100%;
-    height: 42px;
-    background: linear-gradient(135deg, #112233 0%, #1e293b 100%);
-    border: 1px solid var(--accent-cyan);
-    border-radius: 10px;
-    color: var(--accent-cyan);
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
+    /* ACTION BAR */
+    .tap-action-bar {
+      margin: 8px 0;
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
-  .tap-btn:active {
-    transform: scale(0.98);
-    background: var(--accent-cyan);
-    color: #000;
-  }
+    .tap-btn {
+      flex: 1;
+      height: 42px;
+      background: linear-gradient(135deg, #112233 0%, #1e293b 100%);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 10px;
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .tap-btn:active {
+      transform: scale(0.98);
+      background: var(--accent-cyan);
+      color: #000;
+    }
 
-  /* MAIN SCROLLABLE VIEWPORT */
-  .viewport {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    padding-bottom: 8px;
-    min-height: 0;
-  }
+    .aux-btn {
+      width: 42px;
+      height: 42px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 15px;
+    }
 
-  .view-tab { display: none; flex-direction: column; gap: 10px; }
-  .view-tab.active { display: flex; }
+    /* VIEWPORT */
+    .viewport {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 8px;
+      min-height: 0;
+    }
 
-  /* DIRECTIVE CARDS */
-  .card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  }
+    .view-tab { display: none; flex-direction: column; gap: 10px; }
+    .view-tab.active { display: flex; }
 
-  .card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+    /* CARDS */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .card-title { font-size: 14px; font-weight: 700; color: #fff; }
+    .card-badge {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #1e293b;
+      color: var(--accent-amber);
+      text-transform: uppercase;
+    }
+    .card-desc { font-size: 11.5px; color: #94a3b8; line-height: 1.35; }
+    .card-metrics { font-size: 11px; font-family: var(--font-mono); color: var(--accent-amber); }
 
-  .card-title { font-size: 14px; font-weight: 700; color: #fff; }
-  .card-badge {
-    font-size: 9px;
-    font-family: var(--font-mono);
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #1e293b;
-    color: var(--accent-amber);
-    text-transform: uppercase;
-  }
+    /* STOCK MARKET UI */
+    .stock-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .stock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .stock-symbol {
+      font-size: 16px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+    .stock-price {
+      font-size: 16px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .stock-stats {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      background: rgba(0,0,0,0.2);
+      padding: 6px 8px;
+      border-radius: 6px;
+    }
+    .stock-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .manip-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      border-top: 1px dashed var(--border);
+      padding-top: 8px;
+    }
 
-  .card-desc { font-size: 11.5px; color: #94a3b8; line-height: 1.35; }
-  .card-metrics { font-size: 11px; font-family: var(--font-mono); color: var(--accent-amber); }
+    .btn-sm {
+      min-height: 36px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: #192336;
+      color: var(--text-main);
+      touch-action: manipulation;
+    }
+    .btn-sm:active:not(:disabled) { transform: scale(0.98); }
+    .btn-sm:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-buy { border-color: var(--accent-green); color: var(--accent-green); }
+    .btn-sell { border-color: var(--accent-amber); color: var(--accent-amber); }
+    .btn-short { border-color: var(--accent-red); color: var(--accent-red); }
+    .btn-raid { border-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .btn-takeover { grid-column: span 2; border-color: #a855f7; color: #d8b4fe; background: #2e1065; }
 
-  .action-btn {
-    width: 100%;
-    min-height: 44px;
-    background: #1e293b;
-    color: var(--accent-cyan);
-    border: 1px solid var(--accent-cyan);
-    border-radius: 8px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
+    .action-btn {
+      width: 100%;
+      min-height: 44px;
+      background: #1e293b;
+      color: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .action-btn:active:not(:disabled) {
+      transform: scale(0.98);
+      background: var(--accent-cyan);
+      color: #000;
+    }
+    .action-btn:disabled {
+      opacity: 0.3;
+      border-color: var(--border);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
 
-  .action-btn:active:not(:disabled) {
-    transform: scale(0.98);
-    background: var(--accent-cyan);
-    color: #000;
-  }
+    /* LOGS & ROWS */
+    .log-entry {
+      padding: 11px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .log-entry.warn { border-left-color: var(--accent-amber); }
+    .log-entry.crit { border-left-color: var(--accent-red); }
+    .log-entry.success { border-left-color: var(--accent-green); }
 
-  .action-btn:disabled {
-    opacity: 0.3;
-    border-color: var(--border);
-    color: var(--text-muted);
-  }
+    .stat-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
 
-  /* INTEL FEED */
-  .log-entry {
-    padding: 12px;
-    border-radius: 8px;
-    background: var(--bg-card);
-    border-left: 3px solid var(--accent-cyan);
-    font-family: var(--font-mono);
-    font-size: 11px;
-    line-height: 1.4;
-  }
+    /* BOTTOM NAVIGATION (4 TABS) */
+    .bottom-nav {
+      display: flex;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 4px;
+      gap: 4px;
+      flex-shrink: 0;
+      margin-top: 6px;
+    }
+    .nav-item {
+      flex: 1;
+      height: 46px;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-size: 9.5px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .nav-item.active {
+      background: #192336;
+      color: var(--accent-cyan);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
 
-  .log-entry.warn { border-left-color: var(--accent-amber); }
-  .log-entry.crit { border-left-color: var(--accent-red); }
-  .log-entry.success { border-left-color: var(--accent-green); }
-
-  /* EMPIRE STATS PANEL */
-  .stat-row {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--font-mono);
-    font-size: 12px;
-  }
-
-  /* THUMB-ACCESSIBLE BOTTOM NAVIGATION BAR */
-  .bottom-nav {
-    display: flex;
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 4px;
-    gap: 6px;
-    flex-shrink: 0;
-    margin-top: 6px;
-  }
-
-  .nav-item {
-    flex: 1;
-    height: 46px;
-    background: transparent;
-    border: none;
-    border-radius: 10px;
-    color: var(--text-muted);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    font-size: 10px;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    cursor: pointer;
-    touch-action: manipulation;
-  }
-
-  .nav-item.active {
-    background: #192336;
-    color: var(--accent-cyan);
-    border: 1px solid rgba(0, 229, 255, 0.3);
-  }
-
-  .nav-icon { font-size: 14px; }
-
-  /* FULLSCREEN MODAL */
-  .modal-overlay {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    padding: 24px;
-  }
-
-  .modal-box {
-    background: var(--bg-panel);
-    border: 2px solid var(--accent-cyan);
-    border-radius: 14px;
-    padding: 24px;
-    text-align: center;
-    width: 100%;
-    max-width: 340px;
-  }
-</style>
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 24px;
+      backdrop-filter: blur(6px);
+    }
+    .modal-box {
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
+    }
+  </style>
 </head>
 <body>
 
-  <div class="hud">
+  <div class="ticker-bar">
+    <div class="ticker-inner" id="market-ticker">
+      GLOBAL EQUITIES ACTIVE // HFT NODES ONLINE // DARK POOL VOLUME: $2.4B/HR // SHORT DESKS READY
+    </div>
+  </div>
+
+  <header class="hud">
     <div class="hud-block">
       <span class="hud-label">Capital (Cash)</span>
       <span class="hud-val val-green" id="ui-capital">$50.0M</span>
@@ -298,17 +395,21 @@
         <div class="bar-fill" id="bar-trust" style="width: 65%; background: var(--accent-green);"></div>
       </div>
     </div>
-  </div>
+  </header>
 
   <div class="tap-action-bar">
     <button class="tap-btn" onclick="triggerManualSiphon()">
-      <span>⚡ Siphon Market Liquidity</span>
+      <span>⚡ Siphon Liquidity</span>
       <span id="tap-reward" style="font-size: 10px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 6px; border-radius:4px;">+$250K</span>
     </button>
+    <button class="aux-btn" onclick="toggleMute()" id="mute-btn" title="Toggle Audio">🔊</button>
+    <button class="aux-btn" onclick="confirmReset()" title="Reset Save">🔄</button>
   </div>
 
   <main class="viewport">
-    <div id="view-ops" class="view-tab active">
+    <div id="view-ops" class="view-tab active"></div>
+
+    <div id="view-market" class="view-tab">
       </div>
 
     <div id="view-intel" class="view-tab">
@@ -321,35 +422,39 @@
         <span id="empire-date" style="color:var(--accent-cyan);">2004.Q1</span>
       </div>
       <div class="stat-row">
-        <span>HOLDINGS ACQUIRED</span>
-        <span id="empire-holdings" style="color:var(--accent-green);">0 / 9</span>
+        <span>DIRECTIVES COMPLETED</span>
+        <span id="empire-holdings" style="color:var(--accent-green);">0 / 11</span>
       </div>
       <div class="stat-row">
-        <span>PASSIVE INCOME RATE</span>
+        <span>COMPANIES CONTROLLED</span>
+        <span id="empire-companies" style="color:#d8b4fe;">0 / 5</span>
+      </div>
+      <div class="stat-row">
+        <span>PASSIVE REVENUE</span>
         <span id="empire-rate" style="color:var(--accent-amber);">+$1.2M / sec</span>
       </div>
-      <div class="stat-row">
-        <span>HEGEMONY THRESHOLD</span>
-        <span>100% & $1.0T Required</span>
-      </div>
-      <div class="card" style="margin-top:8px;">
-        <div class="card-title">Directives Clearances</div>
-        <div class="card-desc">Expand your grip over broadcast media, critical rare-earth logistics, algorithmic front-running, and sovereign debt instruments to trigger the planetary hegemony state.</div>
+      <div class="card" style="margin-top:6px;">
+        <div class="card-title">Hegemony Objectives</div>
+        <div class="card-desc">Achieve 100% Global Hegemony and a $1 Trillion portfolio through market subjugation, sovereign debt buyouts, and strategic takeovers.</div>
       </div>
     </div>
   </main>
 
   <nav class="bottom-nav">
     <button class="nav-item active" onclick="switchNav('ops', this)">
-      <span class="nav-icon">🏢</span>
+      <span style="font-size:14px;">🏢</span>
       <span>Directives</span>
     </button>
+    <button class="nav-item" onclick="switchNav('market', this)">
+      <span style="font-size:14px;">📈</span>
+      <span>Markets</span>
+    </button>
     <button class="nav-item" onclick="switchNav('intel', this)">
-      <span class="nav-icon">📡</span>
-      <span>Intel Feed</span>
+      <span style="font-size:14px;">📡</span>
+      <span>Intel</span>
     </button>
     <button class="nav-item" onclick="switchNav('empire', this)">
-      <span class="nav-icon">🌐</span>
+      <span style="font-size:14px;">🌐</span>
       <span>Empire</span>
     </button>
   </nav>
@@ -357,8 +462,17 @@
   <div id="modal-container"></div>
 
 <script>
-  // APP STATE
-  const state = {
+  const STORAGE_KEY = "GLOBAL_CAPITAL_V3_SAVE";
+
+  const defaultStocks = [
+    { id: "AURA", name: "Aura Power & Grid", price: 120, shares: 0, shortShares: 0, totalShares: 500000, buyoutCost: 100000000, revenue: 4000000, controlled: false, trend: 0 },
+    { id: "TITAN", name: "Titan Heavy Defense", price: 280, shares: 0, shortShares: 0, totalShares: 800000, buyoutCost: 350000000, revenue: 12000000, controlled: false, trend: 0 },
+    { id: "SYNAPSE", name: "Synapse Bio-Pharma", price: 75, shares: 0, shortShares: 0, totalShares: 600000, buyoutCost: 80000000, revenue: 3000000, controlled: false, trend: 0 },
+    { id: "NEXUS", name: "Nexus Cloud & Telecom", price: 450, shares: 0, shortShares: 0, totalShares: 1200000, buyoutCost: 800000000, revenue: 35000000, controlled: false, trend: 0 },
+    { id: "VALKYRIE", name: "Valkyrie Global Energy", price: 190, shares: 0, shortShares: 0, totalShares: 1000000, buyoutCost: 300000000, revenue: 10000000, controlled: false, trend: 0 }
+  ];
+
+  const defaultState = {
     capital: 50000000,
     netWorth: 150000000,
     influence: 1,
@@ -368,8 +482,26 @@
     tapValue: 250000,
     year: 2004,
     quarter: 1,
-    purchased: new Set()
+    purchased: [],
+    stocks: defaultStocks,
+    muted: false
   };
+
+  let state = loadSave();
+
+  const directives = [
+    { id: "media_syndicate", title: "Apex Media Syndicate", tag: "Narrative", desc: "Acquire international broadcast network. Spin corporate narrative and suppress probes.", cost: 35000000, cashflow: 800000, influence: 4, sentiment: 15, shadow: 0, log: "Apex Media acquired. 24/7 favorable PR network active." },
+    { id: "lithium_mines", title: "Project Chimera: Rare Earths", tag: "Resources", desc: "Secure 20-year sovereign concessions for cobalt and lithium mines in unstable regions.", cost: 40000000, cashflow: 3500000, influence: 5, sentiment: -4, shadow: 8, log: "Project Chimera online. Battery supply chains captured." },
+    { id: "cerberus_engine", title: "Project Cerberus: Surveillance", tag: "Intel Grid", desc: "Off-shore predictive behavioral data-mining engine tapping undersea fiber trunks.", cost: 25000000, cashflow: 1500000, influence: 6, sentiment: -5, shadow: 15, log: "Cerberus intercept hubs activated. Blackmail database indexing politicians." },
+    { id: "defense_buyout", title: "Vanguard Aerospace & PMC", tag: "Force Projection", desc: "Buyout defense drone supplier and private military company for sovereign security.", cost: 85000000, cashflow: 5000000, influence: 8, sentiment: 0, shadow: 12, log: "Vanguard PMC operational. Private drone wings at executive disposal." },
+    { id: "subprime_short", title: "Subprime Credit Default Swaps", tag: "Predatory Finance", desc: "Position shadow funds to profit directly off the global housing derivatives crash.", cost: 60000000, cashflow: 12000000, influence: 10, sentiment: -8, shadow: 5, log: "Credit default swaps cleared. Massive liquidity payout." },
+    { id: "central_bank_capture", title: "Atlas Commercial Bailout", tag: "Monetary Monopoly", desc: "Absorb a collapsing retail bank with $85B in deposits for a $1 token takeover.", cost: 200000000, cashflow: 25000000, influence: 18, sentiment: 8, shadow: 4, log: "Atlas Bank assimilated. Consumer payroll & transactions under your control." },
+    { id: "dark_pool_nodes", title: "High-Frequency Dark Pool", tag: "Algorithmic Frontrun", desc: "Route Cerberus lines directly under stock exchanges to skim international liquidity.", cost: 500000000, cashflow: 60000000, influence: 12, sentiment: -10, shadow: 18, log: "Fiber-optic dark pool tap live. Skimming 12% of equity trading flows." },
+    { id: "orbital_umbrella", title: "Project Aegis: 4,000 LEO Sats", tag: "Orbital Dominance", desc: "Privatize planetary telecommunications and missile early-warning constellations.", cost: 1500000000, cashflow: 120000000, influence: 15, sentiment: 5, shadow: 10, log: "Aegis constellation online. Defense comms routed through private sats." },
+    { id: "quantum_decryption", title: "Quantum Cipher-Break Node", tag: "Cyber Hegemony", desc: "Build quantum computational array to instantly decrypt all sovereign diplomatic communications.", cost: 5000000000, cashflow: 300000000, influence: 12, sentiment: -5, shadow: 20, log: "Quantum cipher online. State secrets decrypted across 140 nations." },
+    { id: "ai_sovereign_core", title: "Project Prometheus: Sentient Core", tag: "AGI Governance", desc: "Deploy autonomous macro-economic AI to manage resource allocation and international treaties.", cost: 20000000000, cashflow: 1000000000, influence: 15, sentiment: 10, shadow: 10, log: "Prometheus AGI online. Global economic planning automated." },
+    { id: "digital_sovereignty", title: "Global CBDC Ledger System", tag: "Sovereign Hegemony", desc: "Force central banks to adopt your private encrypted protocol for all sovereign trade.", cost: 50000000000, cashflow: 3000000000, influence: 20, sentiment: 5, shadow: 15, log: "Sovereign currencies tied into your private ledger. Total hegemony reached." }
+  ];
 
   const formatMoney = num => {
     if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
@@ -379,125 +511,12 @@
     return `$${num.toLocaleString()}`;
   };
 
-  // DIRECTIVES REGISTRY
-  const directives = [
-    {
-      id: "media_syndicate",
-      title: "Apex Media Syndicate",
-      tag: "Narrative Control",
-      desc: "Acquire international broadcast network. Spin corporate narrative and suppress regulatory investigations.",
-      cost: 35000000,
-      cashflow: 800000,
-      influence: 4,
-      sentiment: 15,
-      shadow: 0,
-      log: "Apex Media acquired. 24/7 favorable PR network launched."
-    },
-    {
-      id: "lithium_mines",
-      title: "Project Chimera: Rare Earths",
-      tag: "Resource Chokehold",
-      desc: "Secure 20-year sovereign concessions for cobalt and lithium mines in unstable regions.",
-      cost: 40000000,
-      cashflow: 3500000,
-      influence: 5,
-      sentiment: -4,
-      shadow: 8,
-      log: "Project Chimera online. Battery supply chains under your thumb."
-    },
-    {
-      id: "cerberus_engine",
-      title: "Project Cerberus: Surveillance",
-      tag: "Intelligence Grid",
-      desc: "Off-shore predictive behavioral data-mining engine tapping undersea fiber trunks.",
-      cost: 25000000,
-      cashflow: 1500000,
-      influence: 6,
-      sentiment: -5,
-      shadow: 15,
-      log: "Cerberus intercept hubs activated. Blackmail database indexing politicians."
-    },
-    {
-      id: "defense_buyout",
-      title: "Vanguard Aerospace & PMC",
-      tag: "Force Projection",
-      desc: "Buyout defense drone supplier and private military company for sovereign security operations.",
-      cost: 85000000,
-      cashflow: 5000000,
-      influence: 8,
-      sentiment: 0,
-      shadow: 12,
-      log: "Vanguard PMC operational. Private drone wings at executive disposal."
-    },
-    {
-      id: "subprime_short",
-      title: "Subprime Credit Default Swaps",
-      tag: "Predatory Finance",
-      desc: "Position shadow funds to profit directly off the global housing derivatives crash.",
-      cost: 60000000,
-      cashflow: 12000000,
-      influence: 10,
-      sentiment: -8,
-      shadow: 5,
-      log: "Credit default swaps cleared. Multi-hundred-million liquidity payout."
-    },
-    {
-      id: "central_bank_capture",
-      title: "Atlas Commercial Bailout",
-      tag: "Monetary Monopoly",
-      desc: "Absorb a collapsing retail bank with $85B in deposits for a $1 token takeover.",
-      cost: 200000000,
-      cashflow: 25000000,
-      influence: 18,
-      sentiment: 8,
-      shadow: 4,
-      log: "Atlas Bank assimilated. Consumer payroll & transactions under your control."
-    },
-    {
-      id: "dark_pool_nodes",
-      title: "High-Frequency Dark Pool",
-      tag: "Algorithmic Frontrun",
-      desc: "Route Cerberus lines directly under stock exchanges to skim international liquidity.",
-      cost: 500000000,
-      cashflow: 60000000,
-      influence: 12,
-      sentiment: -10,
-      shadow: 18,
-      log: "Fiber-optic dark pool tap live. Skimming 12% of equity trading flows."
-    },
-    {
-      id: "orbital_umbrella",
-      title: "Project Aegis: 4,000 LEO Sats",
-      tag: "Orbital Dominance",
-      desc: "Privatize planetary telecommunications and missile early-warning constellations.",
-      cost: 1500000000,
-      cashflow: 120000000,
-      influence: 22,
-      sentiment: 5,
-      shadow: 10,
-      log: "Aegis constellation online. Global defense comms routed through your satellites."
-    },
-    {
-      id: "digital_sovereignty",
-      title: "Global CBDC Ledger System",
-      tag: "Sovereign Hegemony",
-      desc: "Force central banks to adopt your private encrypted protocol for all sovereign trade.",
-      cost: 5000000000,
-      cashflow: 400000000,
-      influence: 20,
-      sentiment: 5,
-      shadow: 15,
-      log: "Sovereign currencies tied into your private ledger. Total hegemony reached."
-    }
-  ];
-
-  // AUDIO & HAPTICS ENGINE
   let audioCtx = null;
-  function triggerFeedback(freq = 750) {
-    if (navigator.vibrate) navigator.vibrate(12);
+  function triggerAudio(freq = 750) {
+    if (state.muted) return;
+    if (navigator.vibrate) navigator.vibrate(10);
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
     osc.type = 'sine';
@@ -510,24 +529,27 @@
     osc.stop(audioCtx.currentTime + 0.05);
   }
 
-  // NAVIGATION CONTROLLER
+  function toggleMute() {
+    state.muted = !state.muted;
+    document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
+    saveGame();
+  }
+
   function switchNav(viewId, el) {
-    triggerFeedback(600);
+    triggerAudio(600);
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
     document.querySelectorAll('.view-tab').forEach(tab => tab.classList.remove('active'));
     el.classList.add('active');
     document.getElementById(`view-${viewId}`).classList.add('active');
   }
 
-  // MANUAL LIQUIDITY TAP
   window.triggerManualSiphon = function() {
-    triggerFeedback(950);
+    triggerAudio(950);
     state.capital += state.tapValue;
     state.netWorth += state.tapValue;
     updateUI();
   };
 
-  // LOGS
   function logEvent(msg, type = 'normal') {
     const feed = document.getElementById('log-feed');
     const entry = document.createElement('div');
@@ -536,19 +558,180 @@
     feed.insertBefore(entry, feed.firstChild);
   }
 
-  // RENDER APP STATE
+  // --- STOCK MARKET ENGINE ---
+  function updateStockPrices() {
+    state.stocks.forEach(stock => {
+      if (stock.controlled) return;
+      const deltaPercent = (Math.random() * 0.12) - 0.055;
+      const oldPrice = stock.price;
+      stock.price = Math.max(5, Math.round(stock.price * (1 + deltaPercent)));
+      stock.trend = stock.price >= oldPrice ? 1 : -1;
+      stock.buyoutCost = Math.round(stock.price * stock.totalShares * 0.85);
+    });
+    renderMarket();
+  }
+
+  function renderMarket() {
+    const container = document.getElementById('view-market');
+    container.innerHTML = '';
+    
+    state.stocks.forEach(stock => {
+      const card = document.createElement('div');
+      card.className = 'stock-card';
+      const trendColor = stock.trend >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
+      const trendSymbol = stock.trend >= 0 ? '▲' : '▼';
+      const batchSize = 1000;
+      const batchCost = stock.price * batchSize;
+
+      card.innerHTML = `
+        <div class="stock-header">
+          <div>
+            <div class="stock-symbol">${stock.id} <span style="font-size:12px; font-weight:normal; color:#94a3b8;">(${stock.name})</span></div>
+            ${stock.controlled ? '<span class="card-badge" style="background:#2e1065; color:#d8b4fe;">100% SUBSIDIARY</span>' : ''}
+          </div>
+          <div class="stock-price" style="color:${trendColor}">${trendSymbol} $${stock.price}</div>
+        </div>
+
+        <div class="stock-stats">
+          <span>SHARES: ${(stock.shares || 0).toLocaleString()}</span>
+          <span>SHORT POS: ${(stock.shortShares || 0).toLocaleString()}</span>
+          <span>TAKEOVER VAL: ${formatMoney(stock.buyoutCost)}</span>
+        </div>
+
+        ${!stock.controlled ? `
+        <div class="stock-actions">
+          <button class="btn-sm btn-buy" onclick="buyStock('${stock.id}', 1000)">BUY 1K ($${formatMoney(batchCost)})</button>
+          <button class="btn-sm btn-sell" onclick="sellStock('${stock.id}', 1000)" ${stock.shares < 1000 ? 'disabled' : ''}>SELL 1K</button>
+          <button class="btn-sm btn-short" onclick="shortStock('${stock.id}', 1000)">SHORT 1K ($${formatMoney(batchCost)})</button>
+          <button class="btn-sm btn-raid" onclick="closeShort('${stock.id}', 1000)" ${stock.shortShares < 1000 ? 'disabled' : ''}>COVER SHORT</button>
+        </div>
+
+        <div class="manip-actions">
+          <button class="btn-sm btn-short" onclick="shortAttack('${stock.id}')" title="Crash stock price via smear campaign">📉 SMEAR ATTACK (-50%)</button>
+          <button class="btn-sm btn-buy" onclick="pumpStock('${stock.id}')" title="Inflate stock price via media hype">📈 MEDIA PUMP (+60%)</button>
+          <button class="btn-sm btn-takeover" onclick="hostileTakeover('${stock.id}')" ${state.capital < stock.buyoutCost ? 'disabled' : ''}>
+            ⚡ EXECUTE HOSTILE TAKEOVER (${formatMoney(stock.buyoutCost)})
+          </button>
+        </div>
+        ` : `
+        <div style="font-family:var(--font-mono); font-size:11px; color:var(--accent-green); text-align:center; padding:6px; background:rgba(0,255,102,0.05); border-radius:6px;">
+          ✓ Fully integrated into your empire. Generating +${formatMoney(stock.revenue)}/s revenue.
+        </div>
+        `}
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  window.buyStock = function(id, count) {
+    const s = state.stocks.find(item => item.id === id);
+    const cost = s.price * count;
+    if (state.capital < cost) return;
+    triggerAudio(800);
+    state.capital -= cost;
+    s.shares = (s.shares || 0) + count;
+    logEvent(`Purchased ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "normal");
+    updateUI();
+  };
+
+  window.sellStock = function(id, count) {
+    const s = state.stocks.find(item => item.id === id);
+    if ((s.shares || 0) < count) return;
+    triggerAudio(1000);
+    const revenue = s.price * count;
+    state.capital += revenue;
+    s.shares -= count;
+    logEvent(`Liquidated ${count.toLocaleString()} shares of ${s.id} for +${formatMoney(revenue)}.`, "success");
+    updateUI();
+  };
+
+  window.shortStock = function(id, count) {
+    const s = state.stocks.find(item => item.id === id);
+    const collateral = s.price * count;
+    if (state.capital < collateral) return;
+    triggerAudio(700);
+    state.capital -= collateral;
+    s.shortShares = (s.shortShares || 0) + count;
+    s.shortPrice = s.price;
+    logEvent(`Opened short position on ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "warn");
+    updateUI();
+  };
+
+  window.closeShort = function(id, count) {
+    const s = state.stocks.find(item => item.id === id);
+    if ((s.shortShares || 0) < count) return;
+    triggerAudio(1100);
+    const returnVal = (s.shortPrice * 2 - s.price) * count;
+    state.capital += Math.max(0, returnVal);
+    s.shortShares -= count;
+    logEvent(`Covered short position on ${s.id}. Liquidity settled: +${formatMoney(returnVal)}.`, "success");
+    updateUI();
+  };
+
+  // --- MARKET MANIPULATION ---
+  window.shortAttack = function(id) {
+    const s = state.stocks.find(item => item.id === id);
+    const cost = 10000000;
+    if (state.capital < cost) return;
+    triggerAudio(400);
+    state.capital -= cost;
+    state.shadow += 3;
+    state.sentiment -= 2;
+    const oldP = s.price;
+    s.price = Math.max(4, Math.round(s.price * 0.45));
+    s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
+    logEvent(`CRASH PROTOCOL: Coordinated smear attack crashed ${s.id} from $${oldP} to $${s.price}!`, "crit");
+    updateUI();
+  };
+
+  window.pumpStock = function(id) {
+    const s = state.stocks.find(item => item.id === id);
+    const cost = 8000000;
+    if (state.capital < cost) return;
+    triggerAudio(1200);
+    state.capital -= cost;
+    state.influence += 1;
+    const oldP = s.price;
+    s.price = Math.round(s.price * 1.65);
+    s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
+    logEvent(`PUMP PROTOCOL: Apex Media broadcast frenzy lifted ${s.id} from $${oldP} to $${s.price}.`, "success");
+    updateUI();
+  };
+
+  window.hostileTakeover = function(id) {
+    const s = state.stocks.find(item => item.id === id);
+    if (state.capital < s.buyoutCost || s.controlled) return;
+    triggerAudio(1300);
+    state.capital -= s.buyoutCost;
+    state.netWorth += s.buyoutCost * 1.8;
+    state.cashflow += s.revenue;
+    state.influence += 8;
+    s.controlled = true;
+    logEvent(`HOSTILE TAKEOVER COMPLETE: Absorbed 100% of ${s.name}. Added +${formatMoney(s.revenue)}/s cashflow.`, "success");
+    updateUI();
+  };
+
+  // --- UI RENDER & CLOCK ---
   function updateUI() {
+    let stockEquity = 0;
+    let controlledCount = 0;
+    state.stocks.forEach(s => {
+      stockEquity += (s.shares || 0) * s.price;
+      if (s.controlled) controlledCount++;
+    });
+
     document.getElementById('ui-capital').innerText = formatMoney(state.capital);
     document.getElementById('ui-cashflow').innerText = `+${formatMoney(state.cashflow)}/s`;
-    document.getElementById('ui-networth').innerText = formatMoney(state.netWorth);
+    document.getElementById('ui-networth').innerText = formatMoney(state.netWorth + stockEquity);
     document.getElementById('ui-influence').innerText = `${Math.min(100, state.influence)}%`;
     document.getElementById('bar-influence').style.width = `${Math.min(100, state.influence)}%`;
     document.getElementById('ui-trust-shadow').innerText = `${Math.max(0, state.sentiment)}% / ${state.shadow}%`;
     document.getElementById('bar-trust').style.width = `${Math.max(0, state.sentiment)}%`;
-    
-    // Empire Stats Page
+    document.getElementById('tap-reward').innerText = `+${formatMoney(state.tapValue)}`;
+
     document.getElementById('empire-date').innerText = `${state.year}.Q${state.quarter}`;
-    document.getElementById('empire-holdings').innerText = `${state.purchased.size} / ${directives.length}`;
+    document.getElementById('empire-holdings').innerText = `${state.purchased.length} / ${directives.length}`;
+    document.getElementById('empire-companies').innerText = `${controlledCount} / ${state.stocks.length}`;
     document.getElementById('empire-rate').innerText = `+${formatMoney(state.cashflow)} / sec`;
 
     const stageEl = document.getElementById('ui-stage');
@@ -557,21 +740,20 @@
     else if (state.netWorth >= 10e9) stageEl.innerText = "Stage II: Titan";
     else stageEl.innerText = "Stage I: Mogul";
 
-    // Dynamic button enable/disable
     directives.forEach(d => {
       const btn = document.getElementById(`btn-${d.id}`);
-      if (btn) btn.disabled = state.purchased.has(d.id) || state.capital < d.cost;
+      if (btn) btn.disabled = state.purchased.includes(d.id) || state.capital < d.cost;
     });
 
+    renderMarket();
     checkEndGame();
   }
 
-  // RENDER DIRECTIVE CARDS
   function renderDirectives() {
     const container = document.getElementById('view-ops');
     container.innerHTML = '';
     directives.forEach(d => {
-      const isOwned = state.purchased.has(d.id);
+      const isOwned = state.purchased.includes(d.id);
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
@@ -591,9 +773,9 @@
 
   window.buyDirective = function(id) {
     const d = directives.find(item => item.id === id);
-    if (!d || state.capital < d.cost || state.purchased.has(id)) return;
+    if (!d || state.capital < d.cost || state.purchased.includes(id)) return;
 
-    triggerFeedback(1100);
+    triggerAudio(1100);
     state.capital -= d.cost;
     state.netWorth += d.cost * 1.5;
     state.cashflow += d.cashflow;
@@ -601,16 +783,14 @@
     state.influence += d.influence;
     state.sentiment += d.sentiment;
     state.shadow += d.shadow;
-    state.purchased.add(id);
-
-    document.getElementById('tap-reward').innerText = `+${formatMoney(state.tapValue)}`;
+    state.purchased.push(id);
 
     logEvent(d.log, 'success');
     renderDirectives();
     updateUI();
+    saveGame();
   };
 
-  // CLOCK LOOP (1 SECOND)
   setInterval(() => {
     state.capital += state.cashflow;
     state.netWorth += state.cashflow;
@@ -620,15 +800,17 @@
       state.year++;
       runRandomEvent();
     }
+    updateStockPrices();
     updateUI();
+    saveGame();
   }, 1000);
 
   function runRandomEvent() {
     const events = [
-      { msg: "Antitrust regulators launch probe into data monopoly.", type: "warn", run: () => { state.sentiment -= 4; } },
-      { msg: "Global philanthropic campaign boosts public favorability.", type: "success", run: () => { state.sentiment += 6; } },
-      { msg: "Cerberus intercepts silence uncooperative cabinet minister.", type: "crit", run: () => { state.influence += 3; state.shadow += 3; } },
-      { msg: "Tech bull cycle surges equity valuations.", type: "success", run: () => { state.capital += state.cashflow * 2; } }
+      { msg: "Antitrust regulators launch probe into cloud infrastructure.", type: "warn", run: () => { state.sentiment -= 4; } },
+      { msg: "Global foundation launch lifts public approval rating.", type: "success", run: () => { state.sentiment += 6; } },
+      { msg: "Cerberus intelligence exposes uncooperative prime minister.", type: "crit", run: () => { state.influence += 3; state.shadow += 3; } },
+      { msg: "Tech market valuation surge inflates holding value.", type: "success", run: () => { state.capital += state.cashflow * 2; } }
     ];
     const ev = events[Math.floor(Math.random() * events.length)];
     ev.run();
@@ -637,9 +819,9 @@
 
   function checkEndGame() {
     if (state.influence >= 100 && state.netWorth >= 1e12) {
-      showModal("VICTORY: PLANETARY HEGEMON", "All critical energy grids, sovereign central banks, and defense communications now resolve through your private architecture. You control the world order.");
+      showModal("VICTORY: TOTAL HEGEMONY", "All global communications, sovereign clearing engines, and energy corridors are now bound to your ledger.");
     } else if (state.sentiment <= 0 && state.shadow >= 70) {
-      showModal("DEFEAT: STATE SEIZURE", "Your covert operations were fully exposed before achieving systemic hegemony. Sovereign alliances froze all holding accounts.");
+      showModal("DEFEAT: STATE ASSET SEIZURE", "Your covert operations were exposed by sovereign alliances prior to reaching total systemic control.");
     }
   }
 
@@ -650,15 +832,36 @@
         <div class="modal-box">
           <h2 style="color:var(--accent-cyan); font-family:var(--font-mono); font-size:16px; margin-bottom:8px;">${title}</h2>
           <p style="color:#94a3b8; font-size:12px; line-height:1.4; margin-bottom:16px;">${desc}</p>
-          <button class="action-btn" onclick="location.reload()">REPLAY SIMULATION</button>
+          <button class="action-btn" onclick="resetSave()">REINITIALIZE PROTOCOL</button>
         </div>
       </div>
     `;
   }
 
-  // INITIALIZE
+  function saveGame() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function loadSave() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    return saved ? JSON.parse(saved) : { ...defaultState };
+  }
+
+  function confirmReset() {
+    if (confirm("Reset current simulation and wipe save progress?")) {
+      resetSave();
+    }
+  }
+
+  function resetSave() {
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  }
+
   renderDirectives();
-  logEvent("Cerberus Mobile Node online. Session encrypted.", "normal");
+  renderMarket();
+  logEvent("Terminal Uplink Established. Equities Desk Open.", "normal");
+  document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
   updateUI();
 </script>
 </body>
