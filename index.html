@@ -502,12 +502,12 @@
       
       <div id="ai-chat-log">
         <div class="chat-msg bot">
-          👋 I am your <b>AI System Architect</b>. Chat with me here to code and inject any feature, celebrity contract, or corporate mechanic directly into your live game.
+          👋 I am your <b>AI System Architect</b>. Tell me what feature, company, celebrity contract, or cheat code you want me to build and inject into your game right now!
         </div>
       </div>
 
       <div style="display:flex; gap:6px;">
-        <input type="text" id="ai-feature-prompt" class="input-field" placeholder="Ask AI to add any feature (e.g. add crypto desk, sign QB)...">
+        <input type="text" id="ai-feature-prompt" class="input-field" placeholder="Type prompt (e.g. add luxury airline, give $50M, sign NBA star)..." onkeydown="if(event.key==='Enter') sendAIChatPrompt()">
         <button class="btn-sm btn-buy" id="ai-generate-btn" style="min-width:75px;" onclick="sendAIChatPrompt()">
           SEND 🚀
         </button>
@@ -516,8 +516,8 @@
       <div style="display:flex; gap:4px; overflow-x:auto; padding-bottom:2px;">
         <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-gold); color:var(--accent-gold); white-space:nowrap;" onclick="quickChat('Add Bitcoin Futures Trading Desk')">+ Bitcoin Desk</button>
         <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-pink); color:var(--accent-pink); white-space:nowrap;" onclick="quickChat('Sign a $100M NFL Quarterback')">+ Sign NFL Star</button>
-        <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-purple); color:var(--accent-purple); white-space:nowrap;" onclick="quickChat('Deploy SpaceX Orbital Heavy Rocket Fleet')">+ SpaceX Fleet</button>
-        <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-cyan); color:var(--accent-cyan); white-space:nowrap;" onclick="quickChat('Inject $50M Sovereign Grant')">+ $50M Grant</button>
+        <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-purple); color:var(--accent-purple); white-space:nowrap;" onclick="quickChat('Deploy SpaceX Orbital Rocket Fleet')">+ SpaceX Fleet</button>
+        <button class="btn-sm" style="padding:2px 8px; font-size:9px; border-color:var(--accent-cyan); color:var(--accent-cyan); white-space:nowrap;" onclick="quickChat('Inject $50M Sovereign Liquidity')">+ $50M Cash</button>
       </div>
     </div>
   </div>
@@ -671,7 +671,7 @@
           <span id="ai-revenue-stat" style="color:var(--accent-green); font-weight:bold;">+$100 / sec</span>
         </div>
         <div class="grid-2" style="margin-top:6px;">
-          <button class="btn-sm" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="investInAI('compute')">
+          <button class="btn-sm btn-cyan" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="investInAI('compute')">
             ⚡ EXPAND COMPUTE (<span id="ai-cost-compute">$50K</span>)
           </button>
           <button class="btn-sm" style="border-color:var(--accent-amber); color:var(--accent-amber);" onclick="investInAI('data')">
@@ -742,547 +742,59 @@
   <div id="modal-container"></div>
 
 <script>
-  const STORAGE_KEY = "GLOBAL_CAPITAL_V20_AI_CHAT_STABLE";
-
-  // SPOTIFY RADIO PRESETS
-  const spotifyPlaylists = {
-    bigx: "https://open.spotify.com/embed/artist/3jK8Z1Yx4xJvSg1QZ2dO8K?utm_source=generator&theme=0",
-    texas: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd?utm_source=generator&theme=0",
-    phonk: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
-  };
-
-  function toggleSpotifyDrawer() {
-    const drawer = document.getElementById('spotify-drawer');
-    const btn = document.getElementById('spotify-toggle-btn');
-    drawer.classList.toggle('open');
-    btn.classList.toggle('spotify-active');
+  // --- CORE GAME ACTIONS & RENDER FUNCTIONS ---
+  function saveGame() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  function setSpotifyTrack(key) {
-    const iframe = document.getElementById('spotify-iframe');
-    if (spotifyPlaylists[key]) {
-      iframe.src = spotifyPlaylists[key];
-      logEvent(`SPOTIFY RADIO: Switched stream to ${key.toUpperCase()}.`, "normal");
+  function loadSave() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        parsed.playerCompanies = parsed.playerCompanies || [];
+        parsed.customAIFeatures = parsed.customAIFeatures || [];
+        parsed.signedTalent = parsed.signedTalent || [];
+        parsed.scoutedTalent = parsed.scoutedTalent || [];
+        parsed.distressedPitches = parsed.distressedPitches || [];
+        parsed.rivals = parsed.rivals || generate500AIRivals();
+        parsed.companies = parsed.companies || realWorldCorps;
+        return parsed;
+      } catch(e) {}
+    }
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+
+  function confirmReset() {
+    if (confirm("Reset simulation to Turn 1 Garage Era?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
     }
   }
 
-  // AI ARCHITECT MODAL OPEN/CLOSE
-  window.openAIArchitectDrawer = function() {
-    triggerAudio(1000);
-    document.getElementById('ai-modal-drawer').classList.add('open');
-  };
-
-  window.closeAIArchitectDrawer = function() {
-    document.getElementById('ai-modal-drawer').classList.remove('open');
-  };
-
-  // REAL CORPORATIONS
-  const realWorldCorps = [
-    { id: "AAPL", name: "Apple Inc.", sector: "Hardware & Ecosystem", valuation: 3200000000000, revenue: 95000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "MSFT", name: "Microsoft Corporation", sector: "Cloud & OS Enterprise", valuation: 3100000000000, revenue: 90000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "NVDA", name: "NVIDIA Corporation", sector: "AI Hardware & GPUs", valuation: 3000000000000, revenue: 85000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "GOOGL", name: "Alphabet Inc. (Google)", sector: "Search, Cloud & AI", valuation: 2200000000000, revenue: 75000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "AMZN", name: "Amazon.com Inc.", sector: "E-Commerce & AWS", valuation: 2000000000000, revenue: 70000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "META", name: "Meta Platforms", sector: "Social Telecom & XR", valuation: 1400000000000, revenue: 45000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "DIS", name: "The Walt Disney Company", sector: "Cinema, Parks & Streaming", valuation: 210000000000, revenue: 12000000000, sharesHeldPercent: 0, controlled: false },
-    { id: "UMG", name: "Universal Music Group", sector: "Music Master Rights Monopoly", valuation: 55000000000, revenue: 2800000000, sharesHeldPercent: 0, controlled: false },
-    { id: "SONY", name: "Sony Entertainment", sector: "PlayStation, Music & Films", valuation: 115000000000, revenue: 6000000000, sharesHeldPercent: 0, controlled: false }
-  ];
-
-  // CELEBRITY TALENT
-  const musicSuperstars = [
-    { name: "Drake 'Certified' Graham", category: "Hip-Hop Mogul", dealType: "360 Master Rights Deal", bonus: 2500000, cut: 0.25, fanbase: "140M Listeners", personalWealth: 250000000 },
-    { name: "Taylor 'Eras' Swift", category: "Pop Megastar", dealType: "Stadium Tour & Masters Deal", bonus: 4500000, cut: 0.18, fanbase: "280M Fans", personalWealth: 1100000000 },
-    { name: "BigX 'Texas' Plug", category: "Trap Star", dealType: "Album Advance & Touring 360", bonus: 850000, cut: 0.30, fanbase: "45M Fans", personalWealth: 25000000 },
-    { name: "Beyoncé 'Renaissance' Carter", category: "R&B Titan", dealType: "Visual Album & Brand Monopoly", bonus: 3500000, cut: 0.20, fanbase: "190M BeyHive", personalWealth: 800000000 }
-  ];
-
-  const streamerIcons = [
-    { name: "Jimmy 'MrBeast' Donaldson", category: "YouTube Mogul", dealType: "AdSense & Viral Product Split", bonus: 5000000, cut: 0.20, fanbase: "310M Subs", personalWealth: 500000000 },
-    { name: "Kai 'AMP' Cenat", category: "Live Stream Phenom", dealType: "Subathons & Sponsor Cut", bonus: 1500000, cut: 0.25, fanbase: "25M Twitch", personalWealth: 45000000 }
-  ];
-
-  const movieStars = [
-    { name: "Steven Spielberg", category: "Master Director", dealType: "First-Dollar Gross Deal (Points)", bonus: 6000000, cut: 0.15, fanbase: "Global Cinephiles", personalWealth: 4800000000 },
-    { name: "Christopher Nolan", category: "Cinema Auteur", dealType: "20% First-Dollar Gross (IMAX)", bonus: 5000000, cut: 0.20, fanbase: "IMAX Enthusiasts", personalWealth: 250000000 }
-  ];
-
-  // 500+ POOL GENERATION
-  const firstNamesPool = ["Kaelen", "Lord", "General", "Alistair", "Viktor", "Dmitri", "Sheng", "Magnus", "Xavier", "Cyrus", "Hassan", "Baron", "Ezekiel", "Cassian", "Darius", "Sterling", "Klaus", "Torsten", "Satoshi", "Chen", "Maximilian", "Lucien", "Ignatius", "Amir", "Raheem", "Zane", "Nikolai", "Garrison", "Reinhard", "Bartholomew", "Godfrey", "Vance"];
-  const lastNamesPool = ["Vance", "Sterling", "Zhao", "Blackwood", "Rothschild", "Krestov", "Thorne", "Mercer", "Vanderbilt", "Sinclair", "DuPont", "Castiglione", "Al-Mansoor", "Takahashi", "Volkov", "Warburg", "Rockefeller", "Morozov", "Lindqvist", "Kensington", "Ashford", "Oberoi", "Dubois", "Finch", "Cross", "Drake", "Sovereign"];
-  const corpRootsPool = ["Capital", "Dynamics", "Holdings", "Energy", "Systems", "Pharma", "Logistics", "Robotics", "Defense", "Networks", "Ventures", "Aerospace", "Asset Group", "Syndicate", "Securities"];
-
-  function generate500AIRivals() {
-    const pool = [];
-    pool.push({ id: "RIV_1", name: "Lord Sterling", netWorth: 12500000000, revenue: 45000000, subsidiaries: ["Apex Media Syndicate"], aiModel: "Aegis-Ultra", aiElo: 1420, boardConfidence: 85, defeated: false });
-    pool.push({ id: "RIV_2", name: "Kaelen Vance", netWorth: 45000000000, revenue: 180000000, subsidiaries: ["Nexus Frontier Datacenters"], aiModel: "Nexus-X Frontier", aiElo: 1510, boardConfidence: 92, defeated: false });
-    pool.push({ id: "RIV_3", name: "General Zhao", netWorth: 28000000000, revenue: 95000000, subsidiaries: ["DragonCore Defense PMC"], aiModel: "DragonCore Quantum", aiElo: 1460, boardConfidence: 80, defeated: false });
-
-    for (let i = 4; i <= 500; i++) {
-      const f = firstNamesPool[Math.floor(Math.random() * firstNamesPool.length)];
-      const l = lastNamesPool[Math.floor(Math.random() * lastNamesPool.length)];
-      const name = `${f} ${l}`;
-      const root = corpRootsPool[Math.floor(Math.random() * corpRootsPool.length)];
-      const compName = `${l} ${root}`;
-
-      let nw;
-      const roll = Math.random();
-      if (roll < 0.85) nw = Math.floor(Math.random() * 350000 + 5000);
-      else if (roll < 0.97) nw = Math.floor(Math.random() * 25000000 + 1000000);
-      else nw = Math.floor(Math.random() * 15000000000 + 1000000000);
-
-      const rev = Math.round(nw * (0.015 + Math.random() * 0.02));
-      const elo = Math.floor(Math.random() * 400 + 1000);
-
-      pool.push({
-        id: `RIV_${i}`,
-        name: name,
-        netWorth: nw,
-        revenue: rev,
-        subsidiaries: [compName],
-        aiModel: `${l}-Core v${Math.floor(Math.random() * 4 + 1)}`,
-        aiElo: elo,
-        boardConfidence: Math.floor(Math.random() * 30 + 70),
-        defeated: false
-      });
-    }
-    return pool;
-  }
-
-  const defaultState = {
-    capital: 50000,
-    netWorth: 100000,
-    baseCashflow: 250,
-    tapValue: 1000,
-    boardConfidence: 85,
-    isOusted: false,
-    customAIFeatures: [],
-    aiChatMessages: [],
-    year: 2004,
-    quarter: 1,
-    macroIndex: 0,
-    playerCompanies: [],
-    distressedPitches: [],
-    signedTalent: [],
-    scoutedTalent: [],
-    companies: realWorldCorps,
-    rivals: generate500AIRivals(),
-    ai: {
-      modelName: "Cerberus-Core",
-      elo: 1000,
-      compute: 1,
-      tokens: 0.5,
-      rlhfLevel: 1,
-      computeCost: 50000,
-      dataCost: 30000,
-      trainCost: 100000,
-      apiRevenue: 100
-    },
-    muted: false
-  };
-
-  let state = loadSave();
-
-  const formatMoney = num => {
-    if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
-    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
-    if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
-    if (num >= 1e3) return `$${(num / 1e3).toFixed(1)}K`;
-    return `$${Math.round(num).toLocaleString()}`;
-  };
-
-  // AUDIO FX
-  let audioCtx = null;
-  function triggerAudio(freq = 750) {
-    if (state.muted) return;
-    if (navigator.vibrate) navigator.vibrate(10);
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.05);
-  }
-
-  function toggleMute() {
-    state.muted = !state.muted;
-    document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
-    saveGame();
-  }
-
-  function switchNav(viewId, el) {
-    triggerAudio(600);
-    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.view-tab').forEach(tab => tab.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById(`view-${viewId}`).classList.add('active');
-  }
-
-  window.triggerManualSiphon = function() {
-    triggerAudio(950);
-    state.capital += state.tapValue;
-    updateUI();
-  };
-
-  function logEvent(msg, type = 'normal') {
-    const feed = document.getElementById('log-feed');
-    const entry = document.createElement('div');
-    entry.className = `log-entry ${type}`;
-    entry.innerText = `[${state.year}.Q${state.quarter}] ${msg}`;
-    feed.insertBefore(entry, feed.firstChild);
-  }
-
-  // --- IN-APP AI CHAT ENGINE ---
-  window.sendAIChatPrompt = function() {
-    const input = document.getElementById('ai-feature-prompt');
-    const prompt = input.value.trim();
-    if (!prompt) return;
-
-    appendChatMessage(prompt, 'user');
-    input.value = "";
-
-    triggerAudio(1200);
-
-    setTimeout(() => {
-      processAIChatCommand(prompt);
-    }, 450);
-  };
-
-  window.quickChat = function(promptText) {
-    appendChatMessage(promptText, 'user');
-    processAIChatCommand(promptText);
-  };
-
-  function appendChatMessage(text, role) {
-    const log = document.getElementById('ai-chat-log');
-    const msg = document.createElement('div');
-    msg.className = `chat-msg ${role}`;
-    msg.innerHTML = text;
-    log.appendChild(msg);
-    log.scrollTop = log.scrollHeight;
-  }
-
-  function processAIChatCommand(prompt) {
-    const p = prompt.toLowerCase();
-    let replyText = "";
-    let feature = null;
-
-    if (p.includes("crypto") || p.includes("bitcoin") || p.includes("token")) {
-      feature = {
-        title: "🪙 Autonomous Dark Pool Bitcoin Futures Desk",
-        desc: "High-frequency algorithmic trading desk taking arbitrage profits across global unindexed crypto order books.",
-        cost: 150000,
-        revenueYield: 14500,
-        actionLabel: "COMMISSION BITCOIN DESK"
-      };
-      replyText = `⚡ <b>Feature Synthesized!</b> I have written the code for a <b>Bitcoin Futures Desk</b> and injected it directly into your <b>Found</b> tab. Commission it to earn +$14.5K/s!`;
-    } else if (p.includes("qb") || p.includes("nfl") || p.includes("quarterback") || p.includes("athlete")) {
-      feature = {
-        title: "🏈 $100M Franchise Quarterback Deal",
-        desc: "Secure lifetime signature marketing and apparel royalties on a championship MVP.",
-        cost: 350000,
-        revenueYield: 28000,
-        actionLabel: "SIGN ALL-PRO QB CONTRACT"
-      };
-      replyText = `🏈 <b>Contract Formulated!</b> Added an exclusive <b>$100M All-Pro QB Agreement</b> to your <b>Found</b> tab. Sign it to pocket +$28.0K/s in royalties!`;
-    } else if (p.includes("space") || p.includes("rocket") || p.includes("spacex") || p.includes("satellite")) {
-      feature = {
-        title: "🚀 Orbital Heavy Launch & Satellite Swarm",
-        desc: "Deploy commercial heavy-lift rocket fleet competing directly against SpaceX for sovereign satellite contracts.",
-        cost: 1200000,
-        revenueYield: 95000,
-        actionLabel: "LAUNCH ORBITAL ROCKET FLEET"
-      };
-      replyText = `🚀 <b>Aerospace Module Mounted!</b> Injected a <b>Heavy Orbital Launch System</b> into your <b>Found</b> tab yielding +$95.0K/s cashflow!`;
-    } else if (p.includes("grant") || p.includes("money") || p.includes("cash") || p.includes("billion") || p.includes("bailout")) {
-      state.capital += 5000000;
-      replyText = `💰 <b>Sovereign Liquidity Injected!</b> Transferred <b>+$5,000,000.00</b> directly into your liquid cash balance!`;
-      triggerAudio(1400);
-      updateUI();
-      saveGame();
-    } else {
-      // Dynamic General Synthesis
-      const formattedTitle = prompt.charAt(0).toUpperCase() + prompt.slice(1);
-      const randomCost = Math.floor(Math.random() * 200000 + 40000);
-      const randomYield = Math.floor(Math.random() * 18000 + 3500);
-
-      feature = {
-        title: `⚡ ${formattedTitle} (Live Asset)`,
-        desc: `Custom dynamic enterprise asset synthesized by AI Architect based on your exact specifications.`,
-        cost: randomCost,
-        revenueYield: randomYield,
-        actionLabel: "DEPLOY & ACTIVATE ASSET"
-      };
-
-      replyText = `🛠️ <b>Code Injected!</b> Created <b>"${formattedTitle}"</b> (Cost: ${formatMoney(randomCost)}, Yield: +${formatMoney(randomYield)}/s) and mounted it directly to your <b>Found</b> tab!`;
-    }
-
-    if (feature) {
-      injectGeneratedFeature(feature);
-    }
-
-    appendChatMessage(replyText, 'bot');
-  }
-
-  function injectGeneratedFeature(feat) {
-    feat.id = "AI_FEAT_" + Date.now();
-    feat.owned = false;
-    state.customAIFeatures = state.customAIFeatures || [];
-    state.customAIFeatures.unshift(feat);
-
-    triggerAudio(1300);
-    logEvent(`[AI ARCHITECT] Injected: "${feat.title}"!`, "gold");
-    updateUI();
-    saveGame();
-  }
-
-  window.activateCustomFeature = function(id) {
-    const f = state.customAIFeatures.find(item => item.id === id);
-    if (!f || state.capital < f.cost || f.owned) return;
-
-    triggerAudio(1300);
-    state.capital -= f.cost;
-    state.baseCashflow += f.revenueYield;
-    f.owned = true;
-
-    logEvent(`FEATURE ACTIVATED: ${f.title}! Added +${formatMoney(f.revenueYield)}/s cashflow to your empire.`, "success");
-    updateUI();
-    saveGame();
-  };
-
-  function renderCustomAIFeatures() {
-    const container = document.getElementById('custom-ai-injected-features');
+  // --- FORBES REAL-TIME BILLIONAIRES LIST ---
+  function renderForbesList() {
+    const container = document.getElementById('forbes-list');
     container.innerHTML = '';
 
-    if (!state.customAIFeatures || state.customAIFeatures.length === 0) return;
+    const allBillionaires = [
+      { name: "YOU (Empire Architect)", netWorth: state.netWorth, company: state.playerCompanies[0]?.name || "Holding Conglomerate", isPlayer: true, isCelebrity: false },
+      ...state.rivals.map(r => ({ name: r.name, netWorth: r.netWorth, company: r.subsidiaries?.[0] || "Holding Co", isPlayer: false, isCelebrity: false })),
+      ...state.signedTalent.filter(t => t.personalWealth >= 1000000000).map(t => ({ name: `${t.name} (Signed Star)`, netWorth: t.personalWealth, company: `${t.category}`, isPlayer: false, isCelebrity: true }))
+    ];
 
-    state.customAIFeatures.forEach(f => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.style.borderColor = 'var(--accent-cyan)';
-      card.style.background = 'rgba(0, 229, 255, 0.05)';
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title" style="color:var(--accent-cyan);">${f.title}</div>
-            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">AI ARCHITECT INJECTION // YIELD: +${formatMoney(f.revenueYield)}/s</div>
-          </div>
-          ${f.owned ? '<span class="card-badge" style="background:#064e3b; color:#6ee7b7;">ACTIVE & ONLINE</span>' : `<span class="card-badge" style="color:var(--accent-cyan);">${formatMoney(f.cost)}</span>`}
-        </div>
-        <div class="card-desc">${f.desc}</div>
-        ${!f.owned ? `
-        <button class="btn-sm btn-raid" ${state.capital < f.cost ? 'disabled' : ''} onclick="activateCustomFeature('${f.id}')">
-          ${f.actionLabel} (${formatMoney(f.cost)})
-        </button>
-        ` : `
-        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-green); text-align:center; padding:4px;">
-          ✓ Fully operational. Generating +${formatMoney(f.revenueYield)}/s recurring income.
-        </div>
-        `}
+    allBillionaires.sort((a, b) => b.netWorth - a.netWorth);
+    const playerRank = allBillionaires.findIndex(b => b.isPlayer) + 1;
+    document.getElementById('ui-forbes-rank').innerText = `#${playerRank} of ${allBillionaires.length}`;
+
+    allBillionaires.slice(0, 25).forEach((b, idx) => {
+      const row = document.createElement('div');
+      row.className = `forbes-row ${b.isPlayer ? 'player-row' : (b.isCelebrity ? 'celebrity-row' : '')}`;
+      row.innerHTML = `
+        <span>#${idx + 1} <b>${b.name}</b> <small style="color:var(--text-muted);">(${b.company})</small></span>
+        <span style="color:${b.isPlayer ? 'var(--accent-gold)' : (b.isCelebrity ? 'var(--accent-pink)' : 'var(--accent-green)')}; font-weight:bold;">${formatMoney(b.netWorth)}</span>
       `;
-      container.appendChild(card);
-    });
-  }
-
-  // --- CUSTOM COMPANY FOUNDING (PLAYER) ---
-  window.foundPlayerCompany = function() {
-    const nameInput = document.getElementById('new-comp-name');
-    const sectorSelect = document.getElementById('new-comp-sector');
-    const seedSelect = document.getElementById('new-comp-seed');
-
-    const name = nameInput.value.trim() || `Enterprise-${state.playerCompanies.length + 1}`;
-    const sector = sectorSelect.value;
-    const seedCost = parseInt(seedSelect.value, 10);
-
-    if (state.capital < seedCost) {
-      alert(`Insufficient liquid capital! You need ${formatMoney(seedCost)} for this seed tier.`);
-      return;
-    }
-
-    triggerAudio(1300);
-    state.capital -= seedCost;
-    nameInput.value = "";
-
-    const revenueYield = Math.round(seedCost * (0.05 + Math.random() * 0.03));
-    const valuation = seedCost * 2;
-
-    const newCompany = {
-      id: "P_CORP_" + Date.now(),
-      name: name,
-      sector: sector,
-      valuation: valuation,
-      revenue: revenueYield,
-      isPublic: false
-    };
-
-    state.playerCompanies.push(newCompany);
-    state.baseCashflow += revenueYield;
-    state.boardConfidence = Math.min(100, state.boardConfidence + 10);
-
-    logEvent(`[INCORPORATED] Founded "${name}" (${sector}) with ${formatMoney(seedCost)} seed! Cashflow: +${formatMoney(revenueYield)}/s.`, "found");
-    updateUI();
-    saveGame();
-  };
-
-  window.scalePlayerCompany = function(id) {
-    const c = state.playerCompanies.find(item => item.id === id);
-    const upgradeCost = Math.round(c.valuation * 0.4);
-
-    if (state.capital < upgradeCost) return;
-    triggerAudio(1100);
-    state.capital -= upgradeCost;
-
-    c.valuation = Math.round(c.valuation * 1.8);
-    const extraRev = Math.round(c.revenue * 0.7);
-    c.revenue += extraRev;
-    state.baseCashflow += extraRev;
-
-    logEvent(`SCALED ENTERPRISE: Expanded operations at "${c.name}". Valuation surged to ${formatMoney(c.valuation)}!`, "success");
-    updateUI();
-    saveGame();
-  };
-
-  window.ipoPlayerCompany = function(id) {
-    const c = state.playerCompanies.find(item => item.id === id);
-    if (!c || c.isPublic) return;
-
-    triggerAudio(1400);
-    c.isPublic = true;
-    const ipoWindfall = Math.round(c.valuation * 1.5);
-    state.capital += ipoWindfall;
-
-    logEvent(`🔔 RINGING THE NASDAQ BELL: "${c.name}" IPO completed! Pocketed +${formatMoney(ipoWindfall)} capital windfall!`, "gold");
-    updateUI();
-    saveGame();
-  };
-
-  function renderPlayerEnterprises() {
-    const container = document.getElementById('player-enterprises-list');
-    container.innerHTML = '';
-
-    if (state.playerCompanies.length === 0) {
-      container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); font-style:italic; padding:6px;">No custom enterprises founded yet. Use the incorporation form above.</div>`;
-      return;
-    }
-
-    state.playerCompanies.forEach(c => {
-      const upgradeCost = Math.round(c.valuation * 0.4);
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title" style="color:var(--accent-cyan);">${c.name}</div>
-            <div style="font-size:9.5px; color:var(--accent-amber); font-family:var(--font-mono);">${c.sector} // VALUATION: ${formatMoney(c.valuation)}</div>
-          </div>
-          ${c.isPublic ? '<span class="card-badge" style="background:#422006; color:#fde047;">NASDAQ LISTED</span>' : '<span class="card-badge" style="color:var(--accent-green);">100% PRIVATE</span>'}
-        </div>
-        <div class="stat-row" style="margin:2px 0;">
-          <span>OPERATIONAL CASHFLOW</span>
-          <span style="color:var(--accent-green); font-weight:bold;">+${formatMoney(c.revenue)} / sec</span>
-        </div>
-        <div class="grid-2" style="margin-top:4px;">
-          <button class="btn-sm btn-buy" ${state.capital < upgradeCost ? 'disabled' : ''} onclick="scalePlayerCompany('${c.id}')">
-            ⚡ REINVEST & EXPAND (${formatMoney(upgradeCost)})
-          </button>
-          <button class="btn-sm btn-gold" ${c.isPublic ? 'disabled' : ''} onclick="ipoPlayerCompany('${c.id}')">
-            ${c.isPublic ? '✓ PUBLICLY TRADED' : '🔔 FLOAT SHARES (IPO)'}
-          </button>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  // --- DISTRESSED SHARK TANK PITCHES ---
-  function spawnDistressedPitch() {
-    if (state.distressedPitches.length >= 4) return;
-
-    const f = firstNamesPool[Math.floor(Math.random() * firstNamesPool.length)];
-    const l = lastNamesPool[Math.floor(Math.random() * lastNamesPool.length)];
-    const root = corpRootsPool[Math.floor(Math.random() * corpRootsPool.length)];
-    const compName = `${l} ${root}`;
-    const origVal = Math.floor(Math.random() * 800000 + 100000);
-    const fireSaleCost = Math.round(origVal * 0.10);
-    const rev = Math.round(origVal * 0.035);
-
-    const pitch = {
-      id: "DIST_" + Date.now(),
-      founder: `${f} ${l}`,
-      compName: compName,
-      reason: ["Burning through seed cash runway", "Product recall caused investor panic", "Lost anchor defense subcontract", "Venture round fell through"][Math.floor(Math.random() * 4)],
-      origVal: origVal,
-      fireSaleCost: fireSaleCost,
-      revenueYield: rev,
-      expiresIn: 18
-    };
-
-    state.distressedPitches.push(pitch);
-    logEvent(`🚨 EMERGENCY PITCH: ${pitch.founder} (${pitch.compName}) has 18s of runway left! Offering 90% discount buyout for ${formatMoney(pitch.fireSaleCost)}.`, "crit");
-    renderDistressedPitches();
-  }
-
-  window.rescueAcquire = function(id) {
-    const p = state.distressedPitches.find(item => item.id === id);
-    if (!p || state.capital < p.fireSaleCost) return;
-
-    triggerAudio(1300);
-    state.capital -= p.fireSaleCost;
-    state.baseCashflow += p.revenueYield;
-
-    state.playerCompanies.push({
-      id: "P_CORP_" + Date.now(),
-      name: `${p.compName} (Rescued)`,
-      sector: "Distressed M&A Acquisition",
-      valuation: p.origVal,
-      revenue: p.revenueYield,
-      isPublic: false
-    });
-
-    state.distressedPitches = state.distressedPitches.filter(item => item.id !== id);
-    logEvent(`FIRE-SALE ACQUISITION COMPLETE: Rescued ${p.compName} for ${formatMoney(p.fireSaleCost)}! Absorbed +${formatMoney(p.revenueYield)}/s cashflow.`, "success");
-    updateUI();
-    saveGame();
-  };
-
-  function renderDistressedPitches() {
-    const container = document.getElementById('distressed-pitches-list');
-    container.innerHTML = '';
-
-    if (state.distressedPitches.length === 0) {
-      container.innerHTML = `<div style="font-size:11px; color:var(--text-muted); font-style:italic; padding:6px;">No emergency fire-sale pitches right now. When founders run out of runway, they will pitch you here.</div>`;
-      return;
-    }
-
-    state.distressedPitches.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'card distressed';
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title" style="color:var(--accent-red);">${p.compName}</div>
-            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">FOUNDER: ${p.founder} // REASON: ${p.reason}</div>
-          </div>
-          <span class="card-badge" style="background:#7f1d1d; color:#fca5a5;">90% DISCOUNT</span>
-        </div>
-        <div class="stat-row" style="margin:2px 0;">
-          <span>ORIGINAL VALUATION: ${formatMoney(p.origVal)}</span>
-          <span style="color:var(--accent-green); font-weight:bold;">YIELD: +${formatMoney(p.revenueYield)}/s</span>
-        </div>
-        <div style="font-size:10px; color:var(--accent-amber); font-family:var(--font-mono);">
-          ⏳ Total Insolvency & Liquidation in: <b>${p.expiresIn}s</b>
-        </div>
-        <button class="btn-sm btn-buy" ${state.capital < p.fireSaleCost ? 'disabled' : ''} onclick="rescueAcquire('${p.id}')">
-          ⚡ EXECUTE FIRE-SALE RESCUE (${formatMoney(p.fireSaleCost)})
-        </button>
-      `;
-      container.appendChild(card);
+      container.appendChild(row);
     });
   }
 
@@ -1330,32 +842,6 @@
         <div class="card-desc">Active Enterprises: ${r.subsidiaries?.join(', ') || 'Early Stage'}</div>
       `;
       container.appendChild(card);
-    });
-  }
-
-  // --- FORBES REAL-TIME BILLIONAIRES LIST ---
-  function renderForbesList() {
-    const container = document.getElementById('forbes-list');
-    container.innerHTML = '';
-
-    const allBillionaires = [
-      { name: "YOU (Empire Architect)", netWorth: state.netWorth, company: state.playerCompanies[0]?.name || "Holding Conglomerate", isPlayer: true, isCelebrity: false },
-      ...state.rivals.map(r => ({ name: r.name, netWorth: r.netWorth, company: r.subsidiaries?.[0] || "Holding Co", isPlayer: false, isCelebrity: false })),
-      ...state.signedTalent.filter(t => t.personalWealth >= 1000000000).map(t => ({ name: `${t.name} (Signed Star)`, netWorth: t.personalWealth, company: `${t.category}`, isPlayer: false, isCelebrity: true }))
-    ];
-
-    allBillionaires.sort((a, b) => b.netWorth - a.netWorth);
-    const playerRank = allBillionaires.findIndex(b => b.isPlayer) + 1;
-    document.getElementById('ui-forbes-rank').innerText = `#${playerRank} of ${allBillionaires.length}`;
-
-    allBillionaires.slice(0, 25).forEach((b, idx) => {
-      const row = document.createElement('div');
-      row.className = `forbes-row ${b.isPlayer ? 'player-row' : (b.isCelebrity ? 'celebrity-row' : '')}`;
-      row.innerHTML = `
-        <span>#${idx + 1} <b>${b.name}</b> <small style="color:var(--text-muted);">(${b.company})</small></span>
-        <span style="color:${b.isPlayer ? 'var(--accent-gold)' : (b.isCelebrity ? 'var(--accent-pink)' : 'var(--accent-green)')}; font-weight:bold;">${formatMoney(b.netWorth)}</span>
-      `;
-      container.appendChild(row);
     });
   }
 
@@ -1700,16 +1186,8 @@
     document.getElementById('ai-cost-train').innerText = formatMoney(state.ai.trainCost);
   }
 
-  // --- MASTER UI UPDATE (WITH BULLETPROOF ARRAYS) ---
+  // --- MASTER UI UPDATE ---
   function updateUI() {
-    state.playerCompanies = state.playerCompanies || [];
-    state.companies = state.companies || [];
-    state.signedTalent = state.signedTalent || [];
-    state.scoutedTalent = state.scoutedTalent || [];
-    state.distressedPitches = state.distressedPitches || [];
-    state.customAIFeatures = state.customAIFeatures || [];
-    state.rivals = state.rivals || [];
-
     let companyEquity = 0;
     state.companies.forEach(c => {
       companyEquity += Math.round(c.valuation * (c.sharesHeldPercent / 100));
@@ -1791,35 +1269,6 @@
     updateUI();
     saveGame();
   }, 1000);
-
-  function saveGame() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  function loadSave() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        parsed.playerCompanies = parsed.playerCompanies || [];
-        parsed.customAIFeatures = parsed.customAIFeatures || [];
-        parsed.signedTalent = parsed.signedTalent || [];
-        parsed.scoutedTalent = parsed.scoutedTalent || [];
-        parsed.distressedPitches = parsed.distressedPitches || [];
-        parsed.rivals = parsed.rivals || generate500AIRivals();
-        parsed.companies = parsed.companies || realWorldCorps;
-        return parsed;
-      } catch(e) {}
-    }
-    return JSON.parse(JSON.stringify(defaultState));
-  }
-
-  function confirmReset() {
-    if (confirm("Reset simulation to Turn 1 Garage Era?")) {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
-  }
 
   // INITIALIZATION
   if (!state.scoutedTalent || state.scoutedTalent.length === 0) {
