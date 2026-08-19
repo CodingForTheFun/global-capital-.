@@ -47,6 +47,7 @@
       overflow: hidden;
       max-width: 960px;
       margin: 0 auto;
+      position: relative;
     }
 
     /* TOP LIVE TICKER */
@@ -78,7 +79,7 @@
       border-radius: 12px;
       padding: 10px 12px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(115px, 1fr));
       gap: 6px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.6);
       flex-shrink: 0;
@@ -86,7 +87,7 @@
 
     .hud-block { display: flex; flex-direction: column; }
     .hud-label { font-size: 8.5px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); font-family: var(--font-mono); }
-    .hud-val { font-size: 15px; font-weight: 800; font-family: var(--font-mono); margin-top: 1px; }
+    .hud-val { font-size: 14.5px; font-weight: 800; font-family: var(--font-mono); margin-top: 1px; }
     .val-green { color: var(--accent-green); }
     .val-cyan { color: var(--accent-cyan); }
     .val-amber { color: var(--accent-amber); }
@@ -156,6 +157,62 @@
       color: var(--accent-spotify);
     }
 
+    /* FLOATING AI ARCHITECT BUBBLE (ALWAYS ON TOP) */
+    #ai-bubble-btn {
+      position: fixed;
+      bottom: 66px;
+      right: 14px;
+      background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+      border: 2px solid var(--accent-cyan);
+      color: #fff;
+      border-radius: 30px;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 0 20px rgba(0, 229, 255, 0.6);
+      z-index: 99999;
+      cursor: pointer;
+      animation: pulseBubble 2s infinite;
+    }
+    @keyframes pulseBubble {
+      0% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 229, 255, 0.4); }
+      50% { transform: scale(1.06); box-shadow: 0 0 24px rgba(0, 229, 255, 0.8); }
+      100% { transform: scale(1); box-shadow: 0 0 12px rgba(0, 229, 255, 0.4); }
+    }
+
+    /* AI ARCHITECT DRAWER */
+    #ai-modal-drawer {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.88);
+      z-index: 100000;
+      padding: 16px;
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+    #ai-modal-drawer.open {
+      display: flex;
+    }
+    .ai-modal-inner {
+      background: var(--bg-panel);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
     /* SPOTIFY DRAWER */
     #spotify-drawer {
       display: none;
@@ -173,7 +230,7 @@
       gap: 6px;
     }
 
-    /* SCROLLABLE VIEWPORT */
+    /* VIEWPORT */
     .viewport {
       flex: 1;
       overflow-y: auto;
@@ -196,6 +253,10 @@
       gap: 6px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
+    .card.distressed {
+      border-color: var(--accent-red);
+      background: rgba(255, 51, 68, 0.05);
+    }
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; }
     .card-title { font-size: 13.5px; font-weight: 700; color: #fff; }
     .card-badge {
@@ -208,7 +269,22 @@
       text-transform: uppercase;
     }
     .card-desc { font-size: 11px; color: #94a3b8; line-height: 1.35; }
-    .card-metrics { font-size: 10.5px; font-family: var(--font-mono); color: var(--accent-amber); }
+
+    /* INPUTS */
+    .input-field {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+      user-select: text;
+      -webkit-user-select: text;
+    }
+    .input-field:focus { border-color: var(--accent-cyan); }
 
     /* BUTTONS */
     .btn-sm {
@@ -257,6 +333,7 @@
     .log-entry.ai { border-left-color: var(--accent-purple); }
     .log-entry.media { border-left-color: var(--accent-pink); }
     .log-entry.gold { border-left-color: var(--accent-gold); }
+    .log-entry.found { border-left-color: var(--accent-cyan); }
 
     .stat-row {
       background: var(--bg-card);
@@ -268,6 +345,27 @@
       align-items: center;
       font-family: var(--font-mono);
       font-size: 11.5px;
+    }
+
+    /* FORBES ROWS */
+    .forbes-row {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+    .forbes-row.player-row {
+      border-color: var(--accent-gold);
+      background: rgba(250, 204, 21, 0.09);
+    }
+    .forbes-row.celebrity-row {
+      border-color: var(--accent-pink);
+      background: rgba(244, 63, 94, 0.05);
     }
 
     /* BOTTOM NAV BAR */
@@ -285,7 +383,7 @@
     }
     .nav-item {
       flex: 1;
-      min-width: 52px;
+      min-width: 48px;
       height: 44px;
       background: transparent;
       border: none;
@@ -296,7 +394,7 @@
       align-items: center;
       justify-content: center;
       gap: 2px;
-      font-size: 8px;
+      font-size: 7.5px;
       font-family: var(--font-mono);
       text-transform: uppercase;
       cursor: pointer;
@@ -307,78 +405,96 @@
       color: var(--accent-cyan);
       border: 1px solid rgba(0, 229, 255, 0.3);
     }
-
-    /* MODAL */
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.92);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 20px;
-      backdrop-filter: blur(6px);
-    }
-    .modal-box {
-      background: var(--bg-panel);
-      border: 2px solid var(--accent-cyan);
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-      width: 100%;
-      max-width: 380px;
-    }
   </style>
 </head>
 <body>
 
   <div class="ticker-bar">
     <div class="ticker-inner" id="market-ticker">
-      MEDIA STUDIOS ACTIVE // TALENT SCOUTING PIPELINE ONLINE // MACRO REGIME: TECH BULL MANIA // STARTUP ACCELERATOR RUNNING
+      GOOGLE AI ARCHITECT RUNNING // IN-APP FEATURE SYNTHESIZER READY // 500+ RIVALS & REAL-WORLD GIANTS SYNCED
     </div>
   </div>
 
   <header class="hud">
     <div class="hud-block">
       <span class="hud-label">Capital (Cash)</span>
-      <span class="hud-val val-green" id="ui-capital">$25.0K</span>
-      <span class="hud-label" id="ui-cashflow" style="color:var(--accent-green); margin-top:1px;">+$120/s</span>
+      <span class="hud-val val-green" id="ui-capital">$50.0K</span>
+      <span class="hud-label" id="ui-cashflow" style="color:var(--accent-green); margin-top:1px;">+$250/s</span>
     </div>
     <div class="hud-block">
-      <span class="hud-label">Net Worth / Stage</span>
-      <span class="hud-val val-cyan" id="ui-networth">$50.0K</span>
-      <span class="hud-label" id="ui-stage" style="color:var(--text-muted); margin-top:1px;">Garage Era</span>
+      <span class="hud-label">Net Worth / Status</span>
+      <span class="hud-val val-cyan" id="ui-networth">$100.0K</span>
+      <span class="hud-label" id="ui-stage" style="color:var(--text-muted); margin-top:1px;">Active Founder</span>
     </div>
     <div class="hud-block">
-      <span class="hud-label">Media & Stars</span>
-      <span class="hud-val val-pink" id="ui-talent-count">0 Signed</span>
+      <span class="hud-label">Forbes Ranking</span>
+      <span class="hud-val val-gold" id="ui-forbes-rank">Unranked</span>
+      <span class="hud-label" style="color:var(--accent-gold); margin-top:1px;">500+ Titans Pool</span>
+    </div>
+    <div class="hud-block">
+      <span class="hud-label">Board Confidence</span>
+      <span class="hud-val" id="ui-board-val" style="color:var(--accent-green);">85%</span>
       <div class="bar-container">
-        <div class="bar-fill" id="bar-influence" style="width: 1%; background: var(--accent-pink);"></div>
-      </div>
-    </div>
-    <div class="hud-block">
-      <span class="hud-label">Trust / Heat Index</span>
-      <span class="hud-val" id="ui-trust-shadow" style="font-size: 13px;">70% / 0%</span>
-      <div class="bar-container">
-        <div class="bar-fill" id="bar-trust" style="width: 70%; background: var(--accent-green);"></div>
+        <div class="bar-fill" id="bar-board" style="width: 85%; background: var(--accent-green);"></div>
       </div>
     </div>
   </header>
 
   <div class="tap-action-bar">
-    <button class="tap-btn" onclick="triggerManualSiphon()">
-      <span>⚡ Hustle & Siphon</span>
-      <span id="tap-reward" style="font-size: 9.5px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 5px; border-radius:4px;">+$500</span>
+    <button class="tap-btn" id="siphon-btn" onclick="triggerManualSiphon()">
+      <span>⚡ Siphon Capital & Hustle</span>
+      <span id="tap-reward" style="font-size: 9.5px; color:#fff; background:rgba(0,0,0,0.3); padding:2px 5px; border-radius:4px;">+$1.0K</span>
     </button>
     <button class="aux-btn" onclick="toggleSpotifyDrawer()" id="spotify-toggle-btn" title="Spotify Radio">📻</button>
     <button class="aux-btn" onclick="toggleMute()" id="mute-btn" title="Sound FX">🔊</button>
     <button class="aux-btn" onclick="confirmReset()" title="Reset">🔄</button>
   </div>
 
+  <button id="ai-bubble-btn" onclick="toggleAIArchitectDrawer()">
+    <span>🤖</span>
+    <span>AI Architect</span>
+  </button>
+
+  <div id="ai-modal-drawer">
+    <div class="ai-modal-inner">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div style="font-size:13px; font-weight:800; font-family:var(--font-mono); color:var(--accent-cyan);">
+          🤖 GOOGLE AI SYSTEM ARCHITECT
+        </div>
+        <button class="btn-sm" style="padding:2px 8px; border-color:var(--accent-red); color:var(--accent-red);" onclick="toggleAIArchitectDrawer()">✕</button>
+      </div>
+      
+      <div style="font-size:11px; color:#94a3b8; line-height:1.35;">
+        Prompt the AI Architect to implement, code, or inject any custom feature, celebrity deal, or corporate mechanic directly into your live game.
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <input type="text" id="ai-feature-prompt" class="input-field" placeholder="e.g. Add Bitcoin mining rig, sign a $100M NFL QB, create space elevator">
+        <button class="btn-sm btn-buy" id="ai-generate-btn" onclick="requestAIFeatureGeneration()">
+          ⚡ IMPLEMENT & INJECT FEATURE
+        </button>
+      </div>
+
+      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">
+        Quick Injections
+      </div>
+      <div class="grid-2">
+        <button class="btn-sm" style="border-color:var(--accent-gold); color:var(--accent-gold);" onclick="quickInject('crypto')">🪙 Bitcoin Futures Desk</button>
+        <button class="btn-sm" style="border-color:var(--accent-pink); color:var(--accent-pink);" onclick="quickInject('athlete')">🏈 $100M NFL Quarterback</button>
+        <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple);" onclick="quickInject('space')">🚀 SpaceX Orbital Competitor</button>
+        <button class="btn-sm" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="quickInject('grant')">💰 $50M Sovereign Grant</button>
+      </div>
+
+      <div style="border-top:1px dashed var(--border); padding-top:6px; display:flex; flex-direction:column; gap:4px;">
+        <span style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">OPTIONAL: GOOGLE GEMINI API KEY</span>
+        <input type="password" id="gemini-api-key" class="input-field" placeholder="AIzaSy... (Leave blank for offline neural engine)" onchange="saveGeminiKey()">
+      </div>
+    </div>
+  </div>
+
   <div id="spotify-drawer">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-      <span style="font-size:10px; font-family:var(--font-mono); color:var(--accent-spotify); font-weight:bold;">🟢 SPOTIFY RADIO // BIGXTHAPLUG & DRIFT</span>
+      <span style="font-size:10px; font-family:var(--font-mono); color:var(--accent-spotify); font-weight:bold;">🟢 SPOTIFY RADIO // BIGXTHAPLUG & TEXAS TRAP</span>
       <div style="display:flex; gap:4px;">
         <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--accent-spotify); color:var(--accent-spotify);" onclick="setSpotifyTrack('bigx')">BigXthaPlug</button>
         <button class="btn-sm" style="padding:2px 6px; font-size:9px; border-color:var(--border);" onclick="setSpotifyTrack('texas')">Texas Trap</button>
@@ -390,48 +506,121 @@
   </div>
 
   <main class="viewport">
-    <div id="view-studios" class="view-tab active">
-      <div class="card" style="border-color:var(--accent-pink); background:rgba(244, 63, 94, 0.04);">
+    <div id="view-enterprises" class="view-tab active">
+      <div class="card" style="border-color:var(--accent-cyan); background:rgba(0, 229, 255, 0.04);">
         <div class="card-header">
           <div>
-            <div class="card-title" style="color:var(--accent-pink);">🎙️ Media Labels & Hollywood Studios</div>
-            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">OWN PRODUCTION HOUSES TO SIGN ARTISTS & MOVIE STARS</div>
+            <div class="card-title" style="color:var(--accent-cyan);">🏢 Found Custom Enterprise / Venture</div>
+            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">INCORPORATE AND SCALE SUBSIDIARIES IN ANY GLOBAL INDUSTRY</div>
           </div>
         </div>
-        <div class="grid-2" style="margin-top:4px;">
-          <button class="btn-sm btn-pink" id="btn-label" onclick="buyStudio('recordLabel', 150000, 3500)">
-            🎧 RECORD LABEL ($150K)
-          </button>
-          <button class="btn-sm btn-pink" id="btn-movie" onclick="buyStudio('filmStudio', 750000, 18000)">
-            🎬 MOVIE STUDIO ($750K)
-          </button>
-          <button class="btn-sm btn-pink" id="btn-agency" onclick="buyStudio('talentAgency', 2500000, 60000)">
-            🌟 TALENT AGENCY ($2.5M)
-          </button>
-          <button class="btn-sm btn-pink" id="btn-stream" onclick="buyStudio('streamPlatform', 15000000, 450000)">
-            📺 STREAMING NETWORK ($15M)
+        <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
+          <input type="text" id="new-comp-name" class="input-field" placeholder="Enter Enterprise Name (e.g. Apex Systems, Draco Records)">
+          <div class="grid-2">
+            <select id="new-comp-sector" class="input-field" style="color:var(--accent-cyan);">
+              <option value="Record Label & Entertainment">🎧 Music Label (360 Master Deals)</option>
+              <option value="Film Studio & Production">🎬 Film Studio (First-Dollar Gross)</option>
+              <option value="Creator & Influencer Agency">📹 Creator Agency (AdSense/Sponsor)</option>
+              <option value="Frontier AI & Datacenters">🧠 Frontier AI & Datacenters</option>
+              <option value="Aerospace & Defense PMC">🚀 Aerospace & Defense PMC</option>
+              <option value="BioPharma & Longevity">🧬 BioPharma & Longevity</option>
+            </select>
+            <select id="new-comp-seed" class="input-field" style="color:var(--accent-green);">
+              <option value="25000">Seed: $25K (Garage Tier)</option>
+              <option value="100000">Seed: $100K (Series A)</option>
+              <option value="500000">Seed: $500K (Scaleup)</option>
+              <option value="2500000">Seed: $2.5M (Mega-Venture)</option>
+            </select>
+          </div>
+          <button class="btn-sm btn-buy" onclick="foundPlayerCompany()">
+            🚀 INCORPORATE & LAUNCH ENTERPRISE
           </button>
         </div>
       </div>
 
+      <div id="custom-ai-injected-features" style="display:flex; flex-direction:column; gap:8px;"></div>
+
       <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-top:2px;">
-        Signed Talent Roster & Productions
+        Your Founded Enterprises & Operations
+      </div>
+      <div id="player-enterprises-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="view-talent" class="view-tab">
+      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">
+        Signed Talent Roster (Releasing Autonomously // Fire Anytime)
       </div>
       <div id="signed-talent-list" style="display:flex; flex-direction:column; gap:8px;"></div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:6px; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Scouting Pipeline (Auto-Refreshing)</span>
-        <button class="btn-sm btn-pink" style="padding:2px 8px;" onclick="spawnNewTalent(true)">+ Scout New Talent</button>
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Real-World Scouting Pipeline</span>
+        <button class="btn-sm btn-pink" style="padding:2px 8px;" onclick="spawnNewTalent(true)">+ Scout Pipeline</button>
       </div>
       <div id="scouted-talent-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
-    <div id="view-venture" class="view-tab">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">High-Stakes Seed Stage Startups</span>
-        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-pink); color:var(--accent-pink);" onclick="spawnNewStartup(true)">+ Scout Pitch Deck</button>
+    <div id="view-pitches" class="view-tab">
+      <div class="card" style="border-color:var(--accent-red); background:rgba(255, 51, 68, 0.04);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--accent-red);">🚨 Distressed Startups & Fire-Sale Pitches</div>
+            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">FAILING FOUNDERS WITH $0 RUNWAY PITCHING DESPERATE BUYOUTS (90% DISCOUNT)</div>
+          </div>
+          <span class="card-badge" style="background:#7f1d1d; color:#fca5a5;">M&A BARGAINS</span>
+        </div>
       </div>
-      <div id="startups-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div id="distressed-pitches-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="view-forbes" class="view-tab">
+      <div class="card" style="border-color:var(--accent-gold); background:rgba(250, 204, 21, 0.04);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--accent-gold);">🏆 Forbes Real-Time 500+ Billionaires</div>
+            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">REAL-TIME GLOBAL WEALTH // TRACKING TITANS, CELEBRITIES & 500+ AI RIVALS</div>
+          </div>
+          <span class="card-badge" style="background:#422006; color:#fde047;">500+ POOL</span>
+        </div>
+      </div>
+      <div id="forbes-list" style="display:flex; flex-direction:column; gap:5px;"></div>
+    </div>
+
+    <div id="view-companies" class="view-tab">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Real-World Mega-Corps (Apple, NVDA, Google, Meta, Disney)</span>
+      </div>
+      <div id="companies-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+    </div>
+
+    <div id="view-board" class="view-tab">
+      <div class="card" style="border-color:var(--accent-cyan); background:rgba(0, 229, 255, 0.04);">
+        <div class="card-header">
+          <div>
+            <div class="card-title" style="color:var(--accent-cyan);">🏛️ Board of Directors & Governance</div>
+            <div style="font-size:9.5px; color:var(--text-muted); font-family:var(--font-mono);">MAINTAIN PROFITS & GROWTH TO AVOID GETTING FIRED AS CEO</div>
+          </div>
+          <span class="card-badge" id="board-status-badge" style="color:var(--accent-green);">STABLE TENURE</span>
+        </div>
+        <div class="stat-row" style="margin:2px 0;">
+          <span>BOARD CONFIDENCE METER</span>
+          <span id="board-confidence-text" style="color:var(--accent-green); font-weight:bold;">85%</span>
+        </div>
+        <div class="stat-row" style="margin:2px 0;">
+          <span>EXECUTIVE SALARY DRAW</span>
+          <span id="ceo-salary-text" style="color:var(--accent-cyan); font-weight:bold;">+$1,500 / sec</span>
+        </div>
+        <div class="card-desc" style="margin-top:4px;">
+          If Board Confidence falls to <b>0%</b> from continuous flop write-offs or bankrupt subsidiaries, the Board will vote to <b>FIRE YOU AS CEO</b>.
+        </div>
+        <div class="grid-2" style="margin-top:6px;">
+          <button class="btn-sm btn-buy" onclick="placateBoard('dividend')">
+            💰 PAY SPECIAL DIVIDEND (-$100K Cash, +15% Confidence)
+          </button>
+          <button class="btn-sm btn-gold" onclick="placateBoard('audit')">
+            📑 INDEPENDENT AUDIT (-$50K Cash, +10% Confidence)
+          </button>
+        </div>
+      </div>
     </div>
 
     <div id="view-ai" class="view-tab">
@@ -444,108 +633,71 @@
           <span class="card-badge" id="ai-rank-badge" style="background:#3b0764; color:#d8b4fe;">RANK #4</span>
         </div>
         <div class="stat-row" style="margin:2px 0;">
-          <span>COMPUTE CAPACITY</span>
+          <span>COMPUTE FLEET</span>
           <span id="ai-compute-stat" style="color:var(--accent-cyan); font-weight:bold;">1 Cluster</span>
         </div>
         <div class="stat-row" style="margin:2px 0;">
-          <span>DATASET VOLUME</span>
-          <span id="ai-data-stat" style="color:var(--accent-amber); font-weight:bold;">0.5T Tokens</span>
-        </div>
-        <div class="stat-row" style="margin:2px 0;">
-          <span>API REVENUE YIELD</span>
-          <span id="ai-revenue-stat" style="color:var(--accent-green); font-weight:bold;">+$50 / sec</span>
+          <span>API REVENUE RATE</span>
+          <span id="ai-revenue-stat" style="color:var(--accent-green); font-weight:bold;">+$100 / sec</span>
         </div>
         <div class="grid-2" style="margin-top:6px;">
-          <button class="btn-sm" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="investInAI('compute')">
+          <button class="btn-sm btn-cyan" style="border-color:var(--accent-cyan); color:var(--accent-cyan);" onclick="investInAI('compute')">
             ⚡ EXPAND COMPUTE (<span id="ai-cost-compute">$50K</span>)
           </button>
           <button class="btn-sm" style="border-color:var(--accent-amber); color:var(--accent-amber);" onclick="investInAI('data')">
-            📊 SCRAPE DATA (<span id="ai-cost-data">$25K</span>)
+            📊 SCRAPE TOKENS (<span id="ai-cost-data">$30K</span>)
           </button>
-          <button class="btn-sm" style="border-color:var(--accent-blue); color:var(--accent-blue);" onclick="investInAI('rlhf')">
-            🔬 RLHF ALIGN (<span id="ai-cost-rlhf">$40K</span>)
-          </button>
-          <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple);" onclick="investInAI('train')">
-            🔥 TRAINING RUN (<span id="ai-cost-train">$80K</span>)
+          <button class="btn-sm" style="border-color:var(--accent-purple); color:var(--accent-purple); grid-column:span 2;" onclick="investInAI('train')">
+            🔥 FRONTIER TRAINING RUN (<span id="ai-cost-train">$100K</span>)
           </button>
         </div>
       </div>
       <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-top:4px;">
-        Global Frontier AI Leaderboard
+        Global Frontier AI Model Benchmark
       </div>
       <div id="ai-leaderboard" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
 
-    <div id="view-market" class="view-tab">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Global Equities & M&A Targets</span>
-        <button class="btn-sm" style="padding:3px 8px; border-color:var(--accent-green); color:var(--accent-green);" onclick="spawnNewStock(true)">+ Scan IPO Pipeline</button>
-      </div>
-      <div id="market-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
-    <div id="view-megaprojects" class="view-tab">
-      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">
-        Multi-Trillion Planetary Megaprojects
-      </div>
-      <div id="megaprojects-list" style="display:flex; flex-direction:column; gap:8px;"></div>
-    </div>
-
     <div id="view-rivals" class="view-tab">
-      <div style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase; margin-bottom:2px;">
-        Rival Conglomerates (Building & Buying Out)
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+        <span style="font-size:10px; font-family:var(--font-mono); color:var(--text-muted); text-transform:uppercase;">Top Rival Conglomerates (500 Active Pool)</span>
       </div>
-      <div id="rivals-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div id="rivals-list" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
 
     <div id="view-intel" class="view-tab">
       <div id="log-feed" style="display:flex; flex-direction:column; gap:6px;"></div>
     </div>
-
-    <div id="view-empire" class="view-tab">
-      <div class="stat-row">
-        <span>MACRO REGIME</span>
-        <span id="empire-macro-regime" style="color:var(--accent-green); font-weight:bold;">TECH BULL MANIA</span>
-      </div>
-      <div class="stat-row">
-        <span>TIMELINE</span>
-        <span id="empire-date" style="color:var(--accent-cyan);">2004.Q1</span>
-      </div>
-      <div class="stat-row">
-        <span>PORTFOLIO ASSETS VALUE</span>
-        <span id="empire-stock-equity" style="color:var(--accent-green);">$0</span>
-      </div>
-      <div class="stat-row">
-        <span>SIGNED ARTISTS & STARS</span>
-        <span id="empire-talent-count" style="color:var(--accent-pink);">0</span>
-      </div>
-      <div class="stat-row">
-        <span>TOTAL EMPIRE CASHFLOW</span>
-        <span id="empire-rate" style="color:var(--accent-amber);">+$120 / sec</span>
-      </div>
-    </div>
   </main>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" onclick="switchNav('studios', this)">
-      <span style="font-size:12px;">🎙️</span>
-      <span>Studios</span>
+    <button class="nav-item active" onclick="switchNav('enterprises', this)">
+      <span style="font-size:12px;">🏢</span>
+      <span>Found</span>
     </button>
-    <button class="nav-item" onclick="switchNav('venture', this)">
-      <span style="font-size:12px;">🚀</span>
-      <span>Venture</span>
+    <button class="nav-item" onclick="switchNav('talent', this)">
+      <span style="font-size:12px;">🎙️</span>
+      <span>Talent</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('pitches', this)">
+      <span style="font-size:12px;">🚨</span>
+      <span>Pitches</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('forbes', this)">
+      <span style="font-size:12px;">🏆</span>
+      <span>Forbes</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('companies', this)">
+      <span style="font-size:12px;">📈</span>
+      <span>M&A</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('board', this)">
+      <span style="font-size:12px;">🏛️</span>
+      <span>Board</span>
     </button>
     <button class="nav-item" onclick="switchNav('ai', this)">
       <span style="font-size:12px;">🧠</span>
       <span>AI Lab</span>
-    </button>
-    <button class="nav-item" onclick="switchNav('market', this)">
-      <span style="font-size:12px;">📈</span>
-      <span>Markets</span>
-    </button>
-    <button class="nav-item" onclick="switchNav('megaprojects', this)">
-      <span style="font-size:12px;">🏛️</span>
-      <span>Projects</span>
     </button>
     <button class="nav-item" onclick="switchNav('rivals', this)">
       <span style="font-size:12px;">⚔️</span>
@@ -555,221 +707,192 @@
       <span style="font-size:12px;">📡</span>
       <span>Intel</span>
     </button>
-    <button class="nav-item" onclick="switchNav('empire', this)">
-      <span style="font-size:12px;">🌐</span>
-      <span>Empire</span>
-    </button>
   </nav>
 
   <div id="modal-container"></div>
 
 <script>
-  const STORAGE_KEY = "GLOBAL_CAPITAL_V10_STUDIO_REAL";
-
-  // SPOTIFY RADIO
-  const spotifyPlaylists = {
-    bigx: "https://open.spotify.com/embed/artist/3jK8Z1Yx4xJvSg1QZ2dO8K?utm_source=generator&theme=0",
-    texas: "https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd?utm_source=generator&theme=0",
-    phonk: "https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
-  };
-
-  function toggleSpotifyDrawer() {
-    const drawer = document.getElementById('spotify-drawer');
-    const btn = document.getElementById('spotify-toggle-btn');
-    drawer.classList.toggle('open');
-    btn.classList.toggle('spotify-active');
+  // INITIALIZATION & EVENT LOOP
+  function saveGame() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   }
 
-  function setSpotifyTrack(key) {
-    const iframe = document.getElementById('spotify-iframe');
-    if (spotifyPlaylists[key]) {
-      iframe.src = spotifyPlaylists[key];
-      logEvent(`SPOTIFY RADIO: Switched stream to ${key.toUpperCase()}.`, "normal");
+  function loadSave() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try { return JSON.parse(saved); } catch(e) {}
+    }
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+
+  function confirmReset() {
+    if (confirm("Reset simulation to Turn 1 Garage Era?")) {
+      localStorage.removeItem(STORAGE_KEY);
+      location.reload();
     }
   }
 
-  // MACRO REGIMES
-  const macroRegimes = [
-    { name: "TECH BULL MANIA", icon: "🔥", mult: 1.3, interest: 0.05, ventureOdds: 0.18, log: "MACRO SHIFT: Global venture capital booming." },
-    { name: "GOLDILOCKS EXPANSION", icon: "⚖️", mult: 1.0, interest: 0.07, ventureOdds: 0.10, log: "MACRO SHIFT: Balanced corporate earnings." },
-    { name: "LIQUIDITY FREEZE", icon: "📉", mult: 0.65, interest: 0.12, ventureOdds: 0.04, log: "CRISIS SHIFT: Tech valuations compressing!" },
-    { name: "STAGFLATION SQUEEZE", icon: "⚡", mult: 0.8, interest: 0.14, ventureOdds: 0.06, log: "MACRO SHIFT: Rising debt costs." }
-  ];
+  // --- FORBES REAL-TIME BILLIONAIRES LIST ---
+  function renderForbesList() {
+    const container = document.getElementById('forbes-list');
+    container.innerHTML = '';
 
-  // TALENT FIRST & LAST NAMES
-  const artistFirstNames = ["T-Rex", "Young", "Lil", "Big", "K-Dot", "Nova", "Saint", "Vee", "Baby", "Slick", "Trap", "King"];
-  const artistLastNames = ["Draco", "Plug", "Flacko", "Cartel", "Savage", "Glock", "Smiley", "Prime", "Bandz", "Da Beast"];
-  const movieStars = [
-    { name: "Dominic 'The Hammer' Vance", type: "Action Superstar", cost: 1200000, fee: 35000 },
-    { name: "Elena Rostova", type: "Oscar-Winning Actress", cost: 2500000, fee: 75000 },
-    { name: "Marcus Sterling", type: "Sci-Fi Franchise Lead", cost: 4000000, fee: 120000 },
-    { name: "Sora Takahashi", type: "Martial Arts Icon", cost: 900000, fee: 28000 }
-  ];
+    const allBillionaires = [
+      { name: "YOU (Empire Architect)", netWorth: state.netWorth, company: state.playerCompanies[0]?.name || "Holding Conglomerate", isPlayer: true, isCelebrity: false },
+      ...state.rivals.map(r => ({ name: r.name, netWorth: r.netWorth, company: r.subsidiaries?.[0] || "Holding Co", isPlayer: false, isCelebrity: false })),
+      ...state.signedTalent.filter(t => t.personalWealth >= 1000000000).map(t => ({ name: `${t.name} (Signed Star)`, netWorth: t.personalWealth, company: `${t.category}`, isPlayer: false, isCelebrity: true }))
+    ];
 
-  const stockPrefixes = ["Aero", "Omni", "Vanguard", "Apex", "Cyber", "Bio", "Quantum", "Orbital", "Titan", "Neural", "Helios", "Aegis", "Nova", "Synapse"];
-  const stockRoots = ["Dynamics", "Holdings", "Energy", "Systems", "Pharma", "Logistics", "Robotics", "Defense", "Networks", "Capital", "Intelligence"];
-  const sectors = ["Defense", "Energy", "Bio-Tech", "Cloud", "Cyber", "Aerospace", "Finance"];
+    allBillionaires.sort((a, b) => b.netWorth - a.netWorth);
+    const playerRank = allBillionaires.findIndex(b => b.isPlayer) + 1;
+    document.getElementById('ui-forbes-rank').innerText = `#${playerRank} of ${allBillionaires.length}`;
 
-  const defaultMegaprojects = [
-    { id: "PANAMA_CANAL", title: "Privatize Panama & Suez Canals", cost: 45000000000, revenue: 1800000000, influence: 18, desc: "Toll 12% of maritime shipping.", owned: false },
-    { id: "ORBITAL_SOLAR", title: "Planetary Microwave Solar Reflector", cost: 120000000000, revenue: 5500000000, influence: 22, desc: "Beam gigawatts of wireless power to continents.", owned: false },
-    { id: "SHADOW_FLEET", title: "Vanguard Nuclear PMC Strike Fleet", cost: 80000000000, revenue: 3200000000, influence: 20, desc: "Stealth supercarriers & nuclear subs.", owned: false }
-  ];
-
-  const defaultRivals = [
-    { id: "RIV_1", name: "Sterling Media & Capital", netWorth: 180000, influence: 2, defeated: false, revenue: 450, aiModel: "Aegis-1", aiElo: 1050 },
-    { id: "RIV_2", name: "Vance Tech Labs", netWorth: 450000, influence: 5, defeated: false, revenue: 1200, aiModel: "Nexus-Mini", aiElo: 1120 },
-    { id: "RIV_3", name: "Zhao Defense Group", netWorth: 1200000, influence: 10, defeated: false, revenue: 3500, aiModel: "DragonCore-0", aiElo: 1080 }
-  ];
-
-  const defaultState = {
-    capital: 25000, // Starts small like Microsoft/Facebook in garage
-    netWorth: 50000,
-    baseCashflow: 120,
-    tapValue: 500,
-    influence: 1,
-    sentiment: 70,
-    shadow: 0,
-    year: 2004,
-    quarter: 1,
-    macroIndex: 0,
-    studios: {
-      recordLabel: false,
-      filmStudio: false,
-      talentAgency: false,
-      streamPlatform: false
-    },
-    signedTalent: [],
-    scoutedTalent: [],
-    startups: [],
-    stocks: [],
-    megaprojects: defaultMegaprojects,
-    rivals: defaultRivals,
-    ai: {
-      modelName: "Cerberus-Core",
-      elo: 1000,
-      compute: 1,
-      tokens: 0.5,
-      rlhfLevel: 1,
-      computeCost: 50000,
-      dataCost: 25000,
-      rlhfCost: 40000,
-      trainCost: 80000,
-      apiRevenue: 50
-    },
-    muted: false
-  };
-
-  let state = loadSave();
-
-  const formatMoney = num => {
-    if (num >= 1e12) return `$${(num / 1e12).toFixed(2)}T`;
-    if (num >= 1e9) return `$${(num / 1e9).toFixed(2)}B`;
-    if (num >= 1e6) return `$${(num / 1e6).toFixed(1)}M`;
-    if (num >= 1e3) return `$${(num / 1e3).toFixed(1)}K`;
-    return `$${Math.round(num).toLocaleString()}`;
-  };
-
-  // AUDIO FX
-  let audioCtx = null;
-  function triggerAudio(freq = 750) {
-    if (state.muted) return;
-    if (navigator.vibrate) navigator.vibrate(10);
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.05);
+    allBillionaires.slice(0, 25).forEach((b, idx) => {
+      const row = document.createElement('div');
+      row.className = `forbes-row ${b.isPlayer ? 'player-row' : (b.isCelebrity ? 'celebrity-row' : '')}`;
+      row.innerHTML = `
+        <span>#${idx + 1} <b>${b.name}</b> <small style="color:var(--text-muted);">(${b.company})</small></span>
+        <span style="color:${b.isPlayer ? 'var(--accent-gold)' : (b.isCelebrity ? 'var(--accent-pink)' : 'var(--accent-green)')}; font-weight:bold;">${formatMoney(b.netWorth)}</span>
+      `;
+      container.appendChild(row);
+    });
   }
 
-  function toggleMute() {
-    state.muted = !state.muted;
-    document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
-    saveGame();
+  // --- 500+ AI RIVALS PROCESSOR ---
+  function process500AIRivals() {
+    for (let i = 0; i < 20; i++) {
+      const r = state.rivals[Math.floor(Math.random() * state.rivals.length)];
+      if (!r || r.defeated) continue;
+
+      const roll = Math.random();
+      if (roll < 0.60) {
+        r.netWorth = Math.max(1000, Math.round(r.netWorth * 0.96));
+        if (r.netWorth <= 5000) {
+          const l = lastNamesPool[Math.floor(Math.random() * lastNamesPool.length)];
+          r.netWorth = Math.floor(Math.random() * 25000 + 5000);
+          r.subsidiaries = [`${l} Garage Lab`];
+          logEvent(`[BANKRUPTCY] Competitor ${r.name} went bust and was liquidated!`, "crit");
+        }
+      } else if (roll < 0.90) {
+        r.netWorth = Math.round(r.netWorth * 1.04);
+      } else {
+        r.netWorth = Math.round(r.netWorth * 1.35);
+        r.aiElo += Math.floor(Math.random() * 6 + 2);
+      }
+    }
   }
 
-  function switchNav(viewId, el) {
-    triggerAudio(600);
-    document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-    document.querySelectorAll('.view-tab').forEach(tab => tab.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById(`view-${viewId}`).classList.add('active');
+  function renderRivals() {
+    const container = document.getElementById('rivals-list');
+    container.innerHTML = '';
+
+    const topRivals = [...state.rivals].sort((a, b) => b.netWorth - a.netWorth).slice(0, 15);
+
+    topRivals.forEach(r => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="card-title">${r.name}</div>
+            <div style="font-size:9.5px; color:var(--accent-purple); font-family:var(--font-mono);">VALUATION: ${formatMoney(r.netWorth)} // AI: ${r.aiModel} (${r.aiElo} ELO)</div>
+          </div>
+          <span class="card-badge" style="color:var(--accent-cyan);">${r.subsidiaries?.length || 1} SUBSIDIARIES</span>
+        </div>
+        <div class="card-desc">Active Enterprises: ${r.subsidiaries?.join(', ') || 'Early Stage'}</div>
+      `;
+      container.appendChild(card);
+    });
   }
 
-  window.triggerManualSiphon = function() {
-    triggerAudio(950);
-    state.capital += state.tapValue;
-    updateUI();
-  };
+  // --- REAL-WORLD CORPORATE M&A ---
+  window.buyCompanyStake = function(id, stakePct) {
+    const c = state.companies.find(item => item.id === id);
+    const cost = Math.round(c.valuation * (stakePct / 100));
+    if (!c || state.capital < cost || c.sharesHeldPercent >= 100) return;
 
-  function logEvent(msg, type = 'normal') {
-    const feed = document.getElementById('log-feed');
-    const entry = document.createElement('div');
-    entry.className = `log-entry ${type}`;
-    entry.innerText = `[${state.year}.Q${state.quarter}] ${msg}`;
-    feed.insertBefore(entry, feed.firstChild);
-  }
-
-  // --- STUDIO & TALENT MANAGEMENT SYSTEM ---
-  window.buyStudio = function(type, cost, revenueYield) {
-    if (state.capital < cost || state.studios[type]) return;
     triggerAudio(1200);
     state.capital -= cost;
-    state.studios[type] = true;
-    state.baseCashflow += revenueYield;
-    state.influence += 3;
+    c.sharesHeldPercent += stakePct;
+    state.baseCashflow += Math.round((c.revenue / 50000) * (stakePct / 100));
 
-    logEvent(`ACQUISITION: Built/Acquired ${type.toUpperCase()}! Added +${formatMoney(revenueYield)}/s base revenue.`, "media");
+    if (c.sharesHeldPercent >= 100) {
+      c.controlled = true;
+      logEvent(`TAKEOVER: Absorbed 100% controlling interest in ${c.name}! Added +${formatMoney(c.revenue / 50000)}/s cashflow.`, "success");
+    } else {
+      logEvent(`ACQUIRED ${stakePct}% EQUITY in ${c.name} (${c.sharesHeldPercent}% owned).`, "normal");
+    }
     updateUI();
-    saveGame();
   };
 
-  function createRandomTalent() {
-    const isArtist = Math.random() < 0.6;
-    if (isArtist) {
-      const f = artistFirstNames[Math.floor(Math.random() * artistFirstNames.length)];
-      const l = artistLastNames[Math.floor(Math.random() * artistLastNames.length)];
-      const bonus = Math.floor(Math.random() * 80000 + 20000);
-      const streamingYield = Math.round(bonus * 0.04);
-      return {
-        id: "ART_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        name: `${f} ${l}`,
-        category: "Rapper / Producer",
-        signingBonus: bonus,
-        weeklyRoyalties: streamingYield,
-        hype: Math.floor(Math.random() * 50 + 50),
-        projectsReleased: 0,
-        signed: false
-      };
-    } else {
-      const star = movieStars[Math.floor(Math.random() * movieStars.length)];
-      return {
-        id: "ACT_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
-        name: star.name,
-        category: star.type,
-        signingBonus: star.cost,
-        weeklyRoyalties: star.fee,
-        hype: Math.floor(Math.random() * 40 + 60),
-        projectsReleased: 0,
-        signed: false
-      };
-    }
+  function renderCompanies() {
+    const container = document.getElementById('companies-list');
+    container.innerHTML = '';
+
+    state.companies.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const cost1 = Math.round(c.valuation * 0.01);
+      const cost10 = Math.round(c.valuation * 0.10);
+      const cost100 = Math.round(c.valuation * ((100 - c.sharesHeldPercent) / 100));
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div>
+            <div class="card-title">${c.name} (${c.id})</div>
+            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${c.sector} // MKT CAP: ${formatMoney(c.valuation)}</div>
+          </div>
+          ${c.controlled ? '<span class="card-badge" style="background:#2e1065; color:#d8b4fe;">100% CONTROLLED</span>' : `<span class="card-badge">${c.sharesHeldPercent}% STAKE</span>`}
+        </div>
+        ${!c.controlled ? `
+        <div class="grid-2" style="margin-top:4px;">
+          <button class="btn-sm btn-buy" ${state.capital < cost1 ? 'disabled' : ''} onclick="buyCompanyStake('${c.id}', 1)">
+            BUY 1% (${formatMoney(cost1)})
+          </button>
+          <button class="btn-sm btn-buy" ${state.capital < cost10 ? 'disabled' : ''} onclick="buyCompanyStake('${c.id}', 10)">
+            BUY 10% (${formatMoney(cost10)})
+          </button>
+          <button class="btn-sm btn-takeover" ${state.capital < cost100 ? 'disabled' : ''} onclick="buyCompanyStake('${c.id}', 100 - ${c.sharesHeldPercent})">
+            ⚡ 100% HOSTILE TAKEOVER (${formatMoney(cost100)})
+          </button>
+        </div>
+        ` : `
+        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-green); text-align:center; padding:4px; background:rgba(0,255,102,0.05); border-radius:4px;">
+          ✓ Fully consolidated subsidiary.
+        </div>
+        `}
+      `;
+      container.appendChild(card);
+    });
   }
 
+  // --- AUTONOMOUS TALENT MANAGEMENT ---
   function spawnNewTalent(manual = false) {
     if (state.scoutedTalent.length >= 6) return;
-    const t = createRandomTalent();
+    const roll = Math.random();
+    let template;
+    if (roll < 0.40) template = musicSuperstars[Math.floor(Math.random() * musicSuperstars.length)];
+    else if (roll < 0.70) template = streamerIcons[Math.floor(Math.random() * streamerIcons.length)];
+    else template = movieStars[Math.floor(Math.random() * movieStars.length)];
+
+    const t = {
+      id: "TAL_" + Date.now() + "_" + Math.floor(Math.random() * 1000),
+      name: template.name,
+      category: template.category,
+      dealType: template.dealType,
+      signingBonus: template.bonus,
+      cut: template.cut,
+      fanbase: template.fanbase,
+      personalWealth: template.personalWealth || Math.floor(Math.random() * 10000000 + 2000000),
+      countdown: Math.floor(Math.random() * 8 + 8),
+      totalRoyaltiesEarned: 0,
+      signed: false
+    };
+
     state.scoutedTalent.push(t);
     if (manual) {
       triggerAudio(1000);
-      logEvent(`A&R REPORT: Scouted new talent: ${t.name} (${t.category}).`, "media");
+      logEvent(`A&R SCOUT: Discovered ${t.name} (${t.dealType}).`, "media");
     }
     renderTalentViews();
   }
@@ -778,100 +901,113 @@
     const t = state.scoutedTalent.find(item => item.id === id);
     if (!t || state.capital < t.signingBonus) return;
 
-    if (t.category.includes("Rapper") && !state.studios.recordLabel) {
-      alert("You need to own a Record Label ($150K) to sign music artists!");
-      return;
-    }
-    if (t.category.includes("Actor") || t.category.includes("Star")) {
-      if (!state.studios.filmStudio && !state.studios.talentAgency) {
-        alert("You need a Movie Studio or Talent Agency to sign film actors!");
-        return;
-      }
-    }
-
     triggerAudio(1100);
     state.capital -= t.signingBonus;
-    state.baseCashflow += t.weeklyRoyalties;
-    state.influence += 2;
     t.signed = true;
     state.signedTalent.push(t);
     state.scoutedTalent = state.scoutedTalent.filter(item => item.id !== id);
 
-    logEvent(`CONTRACT SIGNED: ${t.name} joined your roster! Streaming/appearance revenue: +${formatMoney(t.weeklyRoyalties)}/s.`, "success");
+    logEvent(`CONTRACT SIGNED [${t.dealType}]: ${t.name} joined roster! Executive cut: ${(t.cut * 100)}%.`, "success");
     updateUI();
     saveGame();
   };
 
-  window.dropProject = function(id) {
+  window.dropTalent = function(id) {
     const t = state.signedTalent.find(item => item.id === id);
-    const prodCost = Math.round(t.signingBonus * 0.5);
-    if (!t || state.capital < prodCost) return;
+    if (!t) return;
 
-    triggerAudio(1300);
-    state.capital -= prodCost;
-    t.projectsReleased++;
-
-    // CONSUMER LOVE/HATE ROLL
-    const roll = Math.random();
-    let outcome = "";
-    let payout = 0;
-
-    if (roll < 0.25) {
-      outcome = "⚠️ CRITICAL FLOP: Critics panned the release. Modest streaming pickup.";
-      payout = Math.round(prodCost * 0.4);
-      triggerAudio(400);
-    } else if (roll < 0.70) {
-      outcome = "🎵 CHART HIT: Solid radio play and healthy box office returns!";
-      payout = Math.round(prodCost * 2.5);
-      t.weeklyRoyalties = Math.round(t.weeklyRoyalties * 1.3);
-      triggerAudio(1000);
-    } else {
-      outcome = "🔥 VIRAL PHENOMENON: #1 on Billboard & Global Box Office Smash!";
-      payout = Math.round(prodCost * 12.0);
-      t.weeklyRoyalties = Math.round(t.weeklyRoyalties * 2.5);
-      state.influence += 5;
-      triggerAudio(1400);
-    }
-
-    state.capital += payout;
-    state.baseCashflow += Math.round(t.weeklyRoyalties * 0.2);
-
-    logEvent(`RELEASE DROP [${t.name}]: ${outcome} Generated +${formatMoney(payout)} payout!`, "media");
+    triggerAudio(400);
+    state.signedTalent = state.signedTalent.filter(item => item.id !== id);
+    logEvent(`CONTRACT TERMINATED: Fired/dropped ${t.name} from agency roster.`, "warn");
     updateUI();
     saveGame();
   };
+
+  function processTalentReleases() {
+    state.signedTalent.forEach(t => {
+      t.countdown--;
+      if (t.countdown <= 0) {
+        t.countdown = Math.floor(Math.random() * 10 + 8);
+        const roll = Math.random();
+        let gross = 0;
+        let eventText = "";
+
+        if (t.category.includes("Hip-Hop") || t.category.includes("Pop") || t.category.includes("R&B") || t.category.includes("Trap")) {
+          if (roll < 0.25) {
+            gross = Math.floor(Math.random() * 40000 + 10000);
+            eventText = `📉 [STREAMING FLOP] ${t.name}'s new single missed the charts. Gross: ${formatMoney(gross)}.`;
+          } else if (roll < 0.75) {
+            gross = Math.floor(Math.random() * 2500000 + 800000);
+            eventText = `🔥 [ALBUM HIT] ${t.name} released a top 10 album! Gross: ${formatMoney(gross)}.`;
+          } else {
+            gross = Math.floor(Math.random() * 18000000 + 6000000);
+            eventText = `👑 [STADIUM TOUR] ${t.name}'s world tour broke records! Gross: ${formatMoney(gross)}!`;
+          }
+        } else if (t.category.includes("Director") || t.category.includes("Cinema")) {
+          if (roll < 0.3) {
+            gross = Math.floor(Math.random() * 200000 + 50000);
+            eventText = `📉 [BOX OFFICE FLOP] ${t.name}'s studio film underperformed. Gross: ${formatMoney(gross)}.`;
+          } else {
+            gross = Math.floor(Math.random() * 35000000 + 12000000);
+            eventText = `🍿 [SUMMER BLOCKBUSTER] ${t.name}'s IMAX premiere shattered box offices! Gross: ${formatMoney(gross)}!`;
+          }
+        } else {
+          gross = Math.floor(Math.random() * 8000000 + 2000000);
+          eventText = `📹 [VIRAL MERCH LAUNCH] ${t.name} launched viral hydration drink line! Gross: ${formatMoney(gross)}!`;
+        }
+
+        const ceoCut = Math.round(gross * t.cut);
+        const talentShare = gross - ceoCut;
+
+        state.capital += ceoCut;
+        t.personalWealth += talentShare;
+        t.totalRoyaltiesEarned += ceoCut;
+
+        if (t.personalWealth >= 1000000000 && !t.forbesAlerted) {
+          t.forbesAlerted = true;
+          logEvent(`🏆 FORBES LIST ENTRY: Signed star ${t.name} crossed $1 Billion in net worth!`, "gold");
+        }
+
+        logEvent(`${eventText} Your ${(t.cut * 100)}% Executive Cut: +${formatMoney(ceoCut)}!`, "media");
+      }
+    });
+  }
 
   function renderTalentViews() {
-    // Render Signed Roster
     const signedContainer = document.getElementById('signed-talent-list');
     signedContainer.innerHTML = '';
 
     if (state.signedTalent.length === 0) {
-      signedContainer.innerHTML = `<div style="font-size:11px; color:var(--text-muted); font-style:italic; padding:6px;">No talent signed yet. Buy a label or studio above to scout talent.</div>`;
+      signedContainer.innerHTML = `<div style="font-size:11px; color:var(--text-muted); font-style:italic; padding:6px;">No talent signed yet. Scout upcoming stars below.</div>`;
     }
 
     state.signedTalent.forEach(t => {
-      const prodCost = Math.round(t.signingBonus * 0.5);
       const card = document.createElement('div');
       card.className = 'card';
       card.innerHTML = `
         <div class="card-header">
           <div>
             <div class="card-title" style="color:var(--accent-pink);">${t.name}</div>
-            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${t.category} // RELEASES: ${t.projectsReleased}</div>
+            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${t.category} // ${t.dealType} (${(t.cut * 100)}% CEO CUT)</div>
           </div>
-          <span class="card-badge" style="color:var(--accent-green);">+${formatMoney(t.weeklyRoyalties)}/s</span>
+          <span class="card-badge" style="color:var(--accent-gold);">NET WORTH: ${formatMoney(t.personalWealth)}</span>
         </div>
-        <div class="grid-2" style="margin-top:4px;">
-          <button class="btn-sm btn-pink" ${state.capital < prodCost ? 'disabled' : ''} onclick="dropProject('${t.id}')">
-            🚀 DROP ALBUM / MOVIE (${formatMoney(prodCost)})
+        <div class="stat-row" style="margin:2px 0;">
+          <span>TOTAL CEO ROYALTIES POCKETED</span>
+          <span style="color:var(--accent-green); font-weight:bold;">+${formatMoney(t.totalRoyaltiesEarned)}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+          <div style="font-size:10px; color:var(--text-muted); font-family:var(--font-mono);">
+            ⏳ Next Autonomous Drop in: <b style="color:var(--accent-pink);">${t.countdown}s</b> // Fans: <b>${t.fanbase}</b>
+          </div>
+          <button class="btn-sm btn-short" style="padding:2px 6px; font-size:9px;" onclick="dropTalent('${t.id}')">
+            ❌ DROP / FIRE TALENT
           </button>
         </div>
       `;
       signedContainer.appendChild(card);
     });
 
-    // Render Scouted Pipeline
     const scoutedContainer = document.getElementById('scouted-talent-list');
     scoutedContainer.innerHTML = '';
 
@@ -882,40 +1018,79 @@
         <div class="card-header">
           <div>
             <div class="card-title">${t.name}</div>
-            <div style="font-size:9.5px; color:var(--accent-pink); font-family:var(--font-mono);">${t.category}</div>
+            <div style="font-size:9.5px; color:var(--accent-pink); font-family:var(--font-mono);">${t.category} // Fanbase: ${t.fanbase}</div>
           </div>
-          <span class="card-badge">${formatMoney(t.signingBonus)} SIGNING BONUS</span>
+          <span class="card-badge">${formatMoney(t.signingBonus)} ADVANCE</span>
         </div>
-        <div class="card-desc">Projected ongoing royalties: +${formatMoney(t.weeklyRoyalties)}/s to holding balance.</div>
-        <div class="grid-2" style="margin-top:4px;">
-          <button class="btn-sm btn-buy" ${state.capital < t.signingBonus ? 'disabled' : ''} onclick="signTalent('${t.id}')">
-            ✍️ SIGN CONTRACT (${formatMoney(t.signingBonus)})
-          </button>
-        </div>
+        <div class="card-desc">Contract: <b>${t.dealType}</b> — ${(t.cut * 100)}% executive royalty cut on upcoming releases & brand deals.</div>
+        <button class="btn-sm btn-buy" ${state.capital < t.signingBonus ? 'disabled' : ''} onclick="signTalent('${t.id}')">
+          ✍️ DEAL & SIGN CONTRACT (${formatMoney(t.signingBonus)})
+        </button>
       `;
       scoutedContainer.appendChild(card);
     });
+  }
 
-    // Update Studio Buttons
-    if (state.studios.recordLabel) {
-      document.getElementById('btn-label').innerText = "✓ RECORD LABEL OWNED";
-      document.getElementById('btn-label').disabled = true;
+  // --- BOARD OF DIRECTORS ---
+  window.placateBoard = function(type) {
+    if (type === 'dividend') {
+      if (state.capital < 100000) return;
+      triggerAudio(1100);
+      state.capital -= 100000;
+      state.boardConfidence = Math.min(100, state.boardConfidence + 15);
+      logEvent(`SPECIAL DIVIDEND: Board satisfaction rose +15%.`, "success");
+    } else if (type === 'audit') {
+      if (state.capital < 50000) return;
+      triggerAudio(1000);
+      state.capital -= 50000;
+      state.boardConfidence = Math.min(100, state.boardConfidence + 10);
+      logEvent(`INDEPENDENT AUDIT: Board governance confidence rose +10%.`, "normal");
     }
-    if (state.studios.filmStudio) {
-      document.getElementById('btn-movie').innerText = "✓ MOVIE STUDIO OWNED";
-      document.getElementById('btn-movie').disabled = true;
-    }
-    if (state.studios.talentAgency) {
-      document.getElementById('btn-agency').innerText = "✓ TALENT AGENCY OWNED";
-      document.getElementById('btn-agency').disabled = true;
-    }
-    if (state.studios.streamPlatform) {
-      document.getElementById('btn-stream').innerText = "✓ STREAMING NETWORK OWNED";
-      document.getElementById('btn-stream').disabled = true;
+    updateUI();
+  };
+
+  function checkBoardTenure() {
+    if (state.isOusted) return;
+
+    if (state.baseCashflow < 0) state.boardConfidence -= 4;
+
+    if (state.boardConfidence <= 0) {
+      state.isOusted = true;
+      const severance = Math.max(250000, Math.round(state.netWorth * 0.1));
+      state.capital += severance;
+      state.baseCashflow = 500;
+
+      triggerAudio(400);
+      showOustedModal(severance);
+      logEvent(`🚨 VOTE OF NO CONFIDENCE: Board has FIRED YOU as CEO! Severance payout: ${formatMoney(severance)}.`, "crit");
     }
   }
 
-  // --- AI LAB INVESTING ---
+  function showOustedModal(severance) {
+    const modal = document.getElementById('modal-container');
+    modal.innerHTML = `
+      <div class="modal-overlay">
+        <div class="modal-box" style="border-color:var(--accent-red);">
+          <h2 style="color:var(--accent-red); font-family:var(--font-mono); font-size:15px; margin-bottom:8px;">🚨 BOARD OUSTING: FIRED AS CEO</h2>
+          <p style="color:#94a3b8; font-size:11.5px; line-height:1.4; margin-bottom:14px;">
+            The Board of Directors voted to strip your executive powers due to corporate underperformance. You received a <b>${formatMoney(severance)}</b> golden parachute severance package.
+          </p>
+          <button class="btn-sm btn-buy" style="width:100%;" onclick="dismissOustedModal()">
+            ⚡ FOUND NEW ENTERPRISE AS ROGUE RAIDER
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  window.dismissOustedModal = function() {
+    document.getElementById('modal-container').innerHTML = '';
+    state.boardConfidence = 60;
+    state.isOusted = false;
+    updateUI();
+  };
+
+  // --- AI LAB ---
   window.investInAI = function(type) {
     if (type === 'compute') {
       if (state.capital < state.ai.computeCost) return;
@@ -931,50 +1106,28 @@
       state.ai.tokens = +(state.ai.tokens + 1.0).toFixed(1);
       state.ai.elo += 20;
       state.ai.dataCost = Math.round(state.ai.dataCost * 1.35);
-    } else if (type === 'rlhf') {
-      if (state.capital < state.ai.rlhfCost) return;
-      triggerAudio(1100);
-      state.capital -= state.ai.rlhfCost;
-      state.ai.rlhfLevel += 1;
-      state.ai.elo += 30;
-      state.ai.rlhfCost = Math.round(state.ai.rlhfCost * 1.4);
     } else if (type === 'train') {
       if (state.capital < state.ai.trainCost) return;
       triggerAudio(1400);
       state.capital -= state.ai.trainCost;
       const eloGain = Math.floor(Math.random() * 20 + 35) + Math.round(state.ai.compute * 2);
       state.ai.elo += eloGain;
-      state.influence += 2;
       state.ai.trainCost = Math.round(state.ai.trainCost * 1.5);
     }
-
-    calculateAIRankings();
     updateUI();
     saveGame();
   };
 
-  function calculateAIRankings() {
-    const allModels = [
-      { name: `${state.ai.modelName} (YOU)`, elo: state.ai.elo, owner: "Player", isPlayer: true },
-      ...state.rivals.filter(r => !r.defeated).map(r => ({ name: `${r.aiModel} (${r.name})`, elo: r.aiElo, owner: r.name, isPlayer: false }))
-    ];
-
-    allModels.sort((a, b) => b.elo - a.elo);
-    const playerRank = allModels.findIndex(m => m.isPlayer) + 1;
-    document.getElementById('ai-rank-badge').innerText = `RANK #${playerRank}`;
-
-    const macroMult = macroRegimes[state.macroIndex].mult;
-    state.ai.apiRevenue = Math.round((state.ai.elo * 80 * macroMult) * (4 / playerRank));
-
-    return allModels;
-  }
-
   function renderAILeaderboard() {
     const container = document.getElementById('ai-leaderboard');
     container.innerHTML = '';
-    const leaderboard = calculateAIRankings();
+    const allModels = [
+      { name: `${state.ai.modelName} (YOU)`, elo: state.ai.elo, isPlayer: true },
+      ...state.rivals.slice(0, 10).map(r => ({ name: `${r.aiModel} (${r.name})`, elo: r.aiElo, isPlayer: false }))
+    ];
+    allModels.sort((a, b) => b.elo - a.elo);
 
-    leaderboard.forEach((m, idx) => {
+    allModels.forEach((m, idx) => {
       const card = document.createElement('div');
       card.className = 'stat-row';
       card.style.borderColor = m.isPlayer ? 'var(--accent-purple)' : 'var(--border)';
@@ -987,338 +1140,106 @@
 
     document.getElementById('ai-model-elo').innerText = `${state.ai.elo} ELO`;
     document.getElementById('ai-compute-stat').innerText = `${state.ai.compute} Clusters`;
-    document.getElementById('ai-data-stat').innerText = `${state.ai.tokens}T Tokens`;
     document.getElementById('ai-revenue-stat').innerText = `+${formatMoney(state.ai.apiRevenue)} / sec`;
     document.getElementById('ai-cost-compute').innerText = formatMoney(state.ai.computeCost);
     document.getElementById('ai-cost-data').innerText = formatMoney(state.ai.dataCost);
-    document.getElementById('ai-cost-rlhf').innerText = formatMoney(state.ai.rlhfCost);
     document.getElementById('ai-cost-train').innerText = formatMoney(state.ai.trainCost);
   }
 
-  // --- EQUITIES & STOCKS ---
-  function createStock() {
-    const prefix = stockPrefixes[Math.floor(Math.random() * stockPrefixes.length)];
-    const root = stockRoots[Math.floor(Math.random() * stockRoots.length)];
-    const id = (prefix.substring(0, 3) + root.substring(0, 1)).toUpperCase() + Math.floor(Math.random() * 89 + 10);
-    const sector = sectors[Math.floor(Math.random() * sectors.length)];
-    const price = Math.floor(Math.random() * 120 + 20);
-    const totalShares = Math.floor(Math.random() * 400000 + 100000);
-    const revenue = Math.round((price * totalShares) * 0.02);
-
-    return {
-      id: id,
-      name: `${prefix} ${root}`,
-      sector: sector,
-      price: price,
-      shares: 0,
-      shortShares: 0,
-      shortPrice: 0,
-      totalShares: totalShares,
-      buyoutCost: Math.round(price * totalShares * 0.85),
-      revenue: revenue,
-      controlled: false,
-      insolvent: false,
-      trend: 1
-    };
-  }
-
-  function spawnNewStock(manual = false) {
-    if (state.stocks.length >= 12) return;
-    const s = createStock();
-    state.stocks.push(s);
-    if (manual) {
-      triggerAudio(1000);
-      logEvent(`IPO PIPELINE: ${s.name} (${s.id}) listed @ $${s.price}.`, "success");
-    }
-    renderMarket();
-  }
-
-  window.buyStock = function(id, count) {
-    const s = state.stocks.find(item => item.id === id);
-    const cost = s.price * count;
-    if (state.capital < cost || s.insolvent) return;
-    triggerAudio(800);
-    state.capital -= cost;
-    s.shares = (s.shares || 0) + count;
-    logEvent(`Bought ${count.toLocaleString()} shares of ${s.id} @ $${s.price}.`, "normal");
-    updateUI();
-  };
-
-  window.sellStock = function(id, count) {
-    const s = state.stocks.find(item => item.id === id);
-    if ((s.shares || 0) < count) return;
-    triggerAudio(1000);
-    const revenue = s.price * count;
-    state.capital += revenue;
-    s.shares -= count;
-    logEvent(`Sold ${count.toLocaleString()} shares of ${s.id} for +${formatMoney(revenue)}.`, "success");
-    updateUI();
-  };
-
-  window.hostileTakeover = function(id) {
-    const s = state.stocks.find(item => item.id === id);
-    if (state.capital < s.buyoutCost || s.controlled || s.insolvent) return;
-    triggerAudio(1300);
-    state.capital -= s.buyoutCost;
-    state.baseCashflow += s.revenue;
-    state.influence += 4;
-    s.controlled = true;
-    logEvent(`TAKEOVER: Absorbed 100% of ${s.name}. Added +${formatMoney(s.revenue)}/s cashflow.`, "success");
-    updateUI();
-  };
-
-  function renderMarket() {
-    const container = document.getElementById('market-list');
-    container.innerHTML = '';
-
-    state.stocks.forEach(stock => {
-      const card = document.createElement('div');
-      card.className = `card ${stock.insolvent ? 'insolvent' : ''}`;
-      const trendColor = stock.trend >= 0 ? 'var(--accent-green)' : 'var(--accent-red)';
-      const trendSymbol = stock.trend >= 0 ? '▲' : '▼';
-      const batchSize = 1000;
-      const batchCost = stock.price * batchSize;
-
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title">${stock.id} <span style="font-size:11px; font-weight:normal; color:#94a3b8;">(${stock.name})</span></div>
-            <div style="font-size:9.5px; color:var(--accent-cyan); font-family:var(--font-mono);">${stock.sector}</div>
-            ${stock.controlled ? '<span class="card-badge" style="background:#2e1065; color:#d8b4fe;">100% SUBSIDIARY</span>' : ''}
-          </div>
-          <div style="font-family:var(--font-mono); font-weight:bold; font-size:15px; color:${trendColor}">${trendSymbol} $${stock.price}</div>
-        </div>
-
-        <div class="card-metrics" style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:4px 6px; border-radius:4px;">
-          <span>SHARES HELD: ${(stock.shares || 0).toLocaleString()}</span>
-          <span>BUYOUT: ${formatMoney(stock.buyoutCost)}</span>
-        </div>
-
-        ${!stock.controlled ? `
-          <div class="grid-2">
-            <button class="btn-sm btn-buy" onclick="buyStock('${stock.id}', 1000)">BUY 1K (${formatMoney(batchCost)})</button>
-            <button class="btn-sm btn-sell" onclick="sellStock('${stock.id}', 1000)" ${stock.shares < 1000 ? 'disabled' : ''}>SELL 1K</button>
-            <button class="btn-sm btn-takeover" onclick="hostileTakeover('${stock.id}')" ${state.capital < stock.buyoutCost ? 'disabled' : ''}>
-              ⚡ HOSTILE TAKEOVER (${formatMoney(stock.buyoutCost)})
-            </button>
-          </div>
-        ` : `
-        <div style="font-family:var(--font-mono); font-size:10.5px; color:var(--accent-green); text-align:center; padding:4px; background:rgba(0,255,102,0.05); border-radius:4px;">
-          ✓ Consolidated. Generating +${formatMoney(stock.revenue)}/s cashflow.
-        </div>
-        `}
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  // --- VENTURE STARTUPS ---
-  function spawnNewStartup(manual = false) {
-    if (state.startups.length >= 4) return;
-    const s = {
-      id: "ST_" + Date.now(),
-      title: "Quantum Bio-Chips (Seed)",
-      cost: Math.floor(Math.random() * 40000 + 15000)
-    };
-    state.startups.push(s);
-    if (manual) logEvent("Scouted new startup pitch deck.", "normal");
-    renderStartups();
-  }
-
-  function renderStartups() {
-    const container = document.getElementById('startups-list');
-    container.innerHTML = '';
-    state.startups.forEach(s => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div class="card-title">${s.title}</div>
-          <span class="card-badge">${formatMoney(s.cost)} SEED CHECK</span>
-        </div>
-        <button class="btn-sm btn-pink" ${state.capital < s.cost ? 'disabled' : ''} onclick="fundStartup('${s.id}')">
-          🚀 FUND SEED (${formatMoney(s.cost)})
-        </button>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  window.fundStartup = function(id) {
-    const s = state.startups.find(item => item.id === id);
-    if (!s || state.capital < s.cost) return;
-    state.capital -= s.cost;
-    state.startups = state.startups.filter(item => item.id !== id);
-
-    setTimeout(() => {
-      if (Math.random() < 0.3) {
-        const payout = s.cost * 8;
-        state.capital += payout;
-        logEvent(`UNICORN EXIT: Startup returned +${formatMoney(payout)}!`, "success");
-      } else {
-        logEvent(`STARTUP FAILURE: Seed investment burned to $0.`, "crit");
-      }
-      updateUI();
-    }, 3000);
-
-    updateUI();
-  };
-
-  // --- RIVALS ---
-  function renderRivals() {
-    const container = document.getElementById('rivals-list');
-    container.innerHTML = '';
-    state.rivals.forEach(riv => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div>
-            <div class="card-title">${riv.name}</div>
-            <div style="font-size:9.5px; color:var(--accent-purple); font-family:var(--font-mono);">VALUATION: ${formatMoney(riv.netWorth)}</div>
-          </div>
-        </div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function renderMegaprojects() {
-    const container = document.getElementById('megaprojects-list');
-    container.innerHTML = '';
-    state.megaprojects.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="card-header">
-          <div class="card-title">${p.title}</div>
-          <span class="card-badge" style="color:var(--accent-gold);">${formatMoney(p.cost)}</span>
-        </div>
-        <div class="card-desc">${p.desc}</div>
-        ${!p.owned ? `
-        <button class="btn-sm btn-gold" ${state.capital < p.cost ? 'disabled' : ''} onclick="buyMegaproject('${p.id}')">
-          COMMISSION (${formatMoney(p.cost)})
-        </button>
-        ` : `<div style="color:var(--accent-gold); font-size:10px;">✓ Fully Operational</div>`}
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  window.buyMegaproject = function(id) {
-    const p = state.megaprojects.find(m => m.id === id);
-    if (!p || state.capital < p.cost || p.owned) return;
-    state.capital -= p.cost;
-    state.baseCashflow += p.revenue;
-    p.owned = true;
-    logEvent(`COMMISSIONED MEGAPROJECT: ${p.title}!`, "gold");
-    updateUI();
-  };
-
   // --- MASTER UI UPDATE ---
   function updateUI() {
-    let stockEquity = 0;
-    state.stocks.forEach(s => {
-      stockEquity += (s.shares || 0) * s.price;
-      if (s.controlled) stockEquity += s.buyoutCost;
+    let companyEquity = 0;
+    state.companies.forEach(c => {
+      companyEquity += Math.round(c.valuation * (c.sharesHeldPercent / 100));
     });
 
-    const macro = macroRegimes[state.macroIndex];
-    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue) * macro.mult;
+    let playerCompanyVal = 0;
+    state.playerCompanies.forEach(c => {
+      playerCompanyVal += c.valuation;
+    });
 
-    state.netWorth = state.capital + stockEquity + (state.signedTalent.length * 50000);
+    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue);
+    state.netWorth = state.capital + companyEquity + playerCompanyVal + (state.signedTalent.length * 150000);
 
     document.getElementById('ui-capital').innerText = formatMoney(state.capital);
     document.getElementById('ui-cashflow').innerText = `+${formatMoney(totalCashflow)}/s`;
     document.getElementById('ui-networth').innerText = formatMoney(state.netWorth);
-    document.getElementById('ui-talent-count').innerText = `${state.signedTalent.length} Signed`;
-    document.getElementById('empire-talent-count').innerText = state.signedTalent.length;
-    document.getElementById('empire-macro-regime').innerText = `${macro.icon} ${macro.name}`;
+    document.getElementById('ui-board-val').innerText = `${Math.max(0, state.boardConfidence)}%`;
+    document.getElementById('bar-board').style.width = `${Math.max(0, state.boardConfidence)}%`;
+
+    document.getElementById('board-confidence-text').innerText = `${Math.max(0, state.boardConfidence)}%`;
+    document.getElementById('ceo-salary-text').innerText = `+${formatMoney(state.baseCashflow)} / sec`;
+
+    document.getElementById('empire-macro-regime').innerText = `🔥 TECH BULL MANIA`;
     document.getElementById('empire-date').innerText = `${state.year}.Q${state.quarter}`;
-    document.getElementById('empire-stock-equity').innerText = formatMoney(stockEquity);
+    document.getElementById('empire-founded-count').innerText = state.playerCompanies.length;
     document.getElementById('empire-rate').innerText = `+${formatMoney(totalCashflow)} / sec`;
 
     const stageEl = document.getElementById('ui-stage');
-    if (state.netWorth >= 1e12) stageEl.innerText = "Global Hegemon";
-    else if (state.netWorth >= 10e9) stageEl.innerText = "Tech Giant (MSFT/GOOG)";
-    else if (state.netWorth >= 500e6) stageEl.innerText = "Media & Tech Titan";
-    else if (state.netWorth >= 50e6) stageEl.innerText = "Venture Conglomerate";
-    else if (state.netWorth >= 1e6) stageEl.innerText = "Seed Capitalist";
-    else stageEl.innerText = "Garage Era";
+    let stageTitle = "Active Founder";
+    if (state.isOusted) stageTitle = "Ousted Raider";
+    else if (state.netWorth >= 100e9) stageTitle = "Forbes Top 10 Titan";
+    else if (state.netWorth >= 10e9) stageTitle = "Global Megacorporation";
+    else if (state.netWorth >= 1e9) stageTitle = "Billionaire Conglomerate";
+    else if (state.netWorth >= 100e6) stageTitle = "Major Enterprise Group";
+    else if (state.netWorth >= 10e6) stageTitle = "Venture Scale Scaleup";
+    else if (state.netWorth >= 1e6) stageTitle = "Seven-Figure Venture";
 
+    stageEl.innerText = stageTitle;
+
+    renderPlayerEnterprises();
+    renderCustomAIFeatures();
     renderTalentViews();
+    renderDistressedPitches();
+    renderForbesList();
+    renderCompanies();
     renderAILeaderboard();
-    renderMarket();
-    renderStartups();
     renderRivals();
-    renderMegaprojects();
   }
 
-  // --- ENGINE LOOP (1 SEC) ---
+  // --- ENGINE TICK LOOP (1 SEC) ---
   setInterval(() => {
-    const macro = macroRegimes[state.macroIndex];
-    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue) * macro.mult;
+    const totalCashflow = (state.baseCashflow + state.ai.apiRevenue);
     state.capital += totalCashflow;
+
+    processTalentReleases();
+    checkBoardTenure();
+    process500AIRivals();
+
+    // Countdown Distressed Pitches
+    state.distressedPitches.forEach(p => { p.expiresIn--; });
+    state.distressedPitches = state.distressedPitches.filter(p => p.expiresIn > 0);
 
     state.quarter++;
     if (state.quarter > 4) {
       state.quarter = 1;
       state.year++;
-      if (Math.random() < 0.3) {
-        state.macroIndex = Math.floor(Math.random() * macroRegimes.length);
-        logEvent(macroRegimes[state.macroIndex].log, "warn");
-      }
+      runAutoFeatureScanner();
     }
 
-    // Auto-refresh talent pipeline & stocks
-    if (state.scoutedTalent.length < 4 && Math.random() < 0.4) spawnNewTalent(false);
-    if (state.stocks.length < 6 && Math.random() < 0.3) spawnNewStock(false);
+    if (Math.random() < 0.15) spawnDistressedPitch();
+    if (state.scoutedTalent.length < 4 && Math.random() < 0.35) spawnNewTalent(false);
 
-    // Stock price fluctuations
-    state.stocks.forEach(s => {
-      if (s.controlled) return;
-      const delta = (Math.random() * 0.14) - 0.07;
-      s.price = Math.max(2, Math.round(s.price * (1 + delta)));
-      s.buyoutCost = Math.round(s.price * s.totalShares * 0.85);
-    });
-
-    // Rivals organically grow and invest
-    state.rivals.forEach(r => {
-      r.netWorth = Math.round(r.netWorth * (1 + (Math.random() * 0.04 - 0.01)));
-      r.aiElo += Math.floor(Math.random() * 4);
+    // Fluctuate real-world stocks
+    state.companies.forEach(c => {
+      if (c.controlled) return;
+      const delta = (Math.random() * 0.08) - 0.038;
+      c.valuation = Math.max(1000000000, Math.round(c.valuation * (1 + delta)));
     });
 
     updateUI();
     saveGame();
   }, 1000);
 
-  function saveGame() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  }
-
-  function loadSave() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
-      try { return JSON.parse(saved); } catch(e) {}
-    }
-    return JSON.parse(JSON.stringify(defaultState));
-  }
-
-  function confirmReset() {
-    if (confirm("Reset simulation to Garage Era Turn 1?")) {
-      localStorage.removeItem(STORAGE_KEY);
-      location.reload();
-    }
-  }
-
-  // STARTUP INITIALIZATION
-  if (!state.stocks || state.stocks.length === 0) {
-    for (let i = 0; i < 4; i++) state.stocks.push(createStock());
-  }
+  // INITIALIZATION
   if (!state.scoutedTalent || state.scoutedTalent.length === 0) {
-    for (let i = 0; i < 3; i++) state.scoutedTalent.push(createRandomTalent());
+    for (let i = 0; i < 3; i++) spawnNewTalent(false);
   }
-  logEvent("Global Capital Core Online. Media Studios & Compound Growth Active.", "normal");
+  const savedGeminiKey = localStorage.getItem("GLOBAL_CAPITAL_GEMINI_KEY");
+  if (savedGeminiKey) {
+    document.getElementById('gemini-api-key').value = savedGeminiKey;
+  }
+  logEvent("Google AI Architect, Live In-App Chat Bubble & Auto-Updater Online.", "normal");
   document.getElementById('mute-btn').innerText = state.muted ? "🔇" : "🔊";
   updateUI();
 </script>
